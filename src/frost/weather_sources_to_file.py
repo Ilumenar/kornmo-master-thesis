@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 
 
+# ---------------- 1. Collects information about all weather station and sensors in Norway -----------------------------
+
 def get_all_frost_sources(frost_client_id):
     url = "https://frost.met.no/sources/v0.jsonld"
     params = {
@@ -34,8 +36,7 @@ def download_frost_sources_to_file(target_file_path, frost_client_key):
 
 
 def download_frost_sources(client_id):
-
-    target_file_path = 'data/frost_sources.csv'
+    target_file_path = '../../../kornmo-data-files/raw-data/weather-data/frost_sources.csv'
 
     download_frost_sources_to_file(target_file_path, client_id)
     return "Done"

@@ -105,5 +105,7 @@ class DotDict(dict):
 
 WEATHER_TYPES = DotDict({
     'TEMPERATURE': 'temperature',
-    'PRECIPITATION': 'precipitation'
+    'PRECIPITATION': 'precipitation',
+    'DAYDEGREE0': 'daydegree0',
+    'DAYDEGREE5': 'daydegree5'
 })
