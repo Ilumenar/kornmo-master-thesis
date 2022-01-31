@@ -66,8 +66,8 @@ def process_single_value_columns(station_df, station_exploded_df, date, index):
 
 
 def preprocess_weather(start_date, end_date, weather_type):
-    new_filepath = f'../../../kornmo-data-files/raw-data/weather-data/processed/{weather_type}_processed_{start_date}_to_{end_date}.csv'
-    source_filename = f'../../../kornmo-data-files/raw-data/weather-data/raw/{weather_type}_raw_{start_date}_to_{end_date}.csv'
+    new_filepath = f'../../../kornmo-data-files/raw-data/weather-data/processed/{weather_type}/processed_{start_date}_to_{end_date}.csv'
+    source_filename = f'../../../kornmo-data-files/raw-data/weather-data/raw/{weather_type}/raw_{start_date}_to_{end_date}.csv'
 
     total_row_count = sum(1 for line in open(source_filename))
     # Process 50 rows at a time

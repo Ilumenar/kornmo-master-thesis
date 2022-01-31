@@ -32,7 +32,7 @@ def get_frost_data(frost_client_id, source_id, ref_time, element, time_resolutio
 def download_raw_weather_data(weather_type, from_date, to_date, growth_season, frost_sources_df, frost_elements,
                               time_resolution, client_id):
     data_type = 'raw'
-    file_path = f'../../../kornmo-data-files/raw-data/weather-data/raw/{weather_type}_{data_type}_{from_date}_to_{to_date}.csv'
+    file_path = f'../../../kornmo-data-files/raw-data/weather-data/raw/{weather_type}/{data_type}_{from_date}_to_{to_date}.csv'
 
     # If the
     import os
@@ -61,7 +61,7 @@ def download_raw_weather_data(weather_type, from_date, to_date, growth_season, f
 
 
 def raw_frost_readings_to_file(from_date, to_date, growth_season, weather_type, client_id):
-    frost_sources = pd.read_csv('data/frost_sources.csv')
+    frost_sources = pd.read_csv('../../../kornmo-data-files/raw-data/weather-data/frost_sources.csv')
 
     print("---- Downloading raw readings ----")
     print(f"Weather type: {weather_type}")
