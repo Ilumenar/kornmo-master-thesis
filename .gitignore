@@ -134,4 +134,5 @@ dmypy.json
 .vscode/
 data/
 .idea/
-
+venv/
+shapefiles/
