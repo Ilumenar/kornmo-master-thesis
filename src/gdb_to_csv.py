@@ -4,28 +4,38 @@ import fiona
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from utils import plot_bar
+import os
 
-# Get all the layers from the .gdb file 
+import geopandas
 
-gdb_soilqual = 'C:/Users/Sigurd/Desktop/jordkvalitet_agder.gdb'
-gdf = gpd.read_file(gdb_soilqual, driver='FileGDB', layer=0)
-gdf = gdf.dropna()
+#gdb_soilqual = 'C:/Users/Sigurd/Desktop/jordkvalitet_agder.gdb'
+soilquality_path = "E:/Universitetet i Agder/Mikkel Andreas Kvande - kornmo-data-files/raw-data/soil-data"
 
-gdb_soil = 'C:/Users/Sigurd/Desktop/0000_25833_jordsmonn_gdb.gdb'
-layers = fiona.listlayers(gdb_soil)
-gdf2 = gpd.GeoDataFrame()
+
+print("Reading jordsmonn_norge")
+layers = fiona.listlayers(os.path.join(soilquality_path, 'jordsmonn.gdb'))
+jordsmonn = gpd.GeoDataFrame()
+
 for layer in tqdm(layers, total=len(layers)):
-    new_gdf = gpd.read_file(gdb_soil, layer=layer)
-    gdf2 = pd.concat([gdf2, new_gdf])
+    new_gdf = gpd.read_file(os.path.join(soilquality_path, 'jordsmonn.gdb'), layer=layer)
+    jordsmonn = pd.concat([jordsmonn, new_gdf])
+
+print("Reading jordkvalitet_norge.gdb")
+
+soilquality = gpd.read_file(os.path.join(soilquality_path, 'soil-quality.gdb'), driver='FileGDB', layer=0)
+soilquality = soilquality.dropna()
+print(type(soilquality.iloc[0]['geometry']))
 
 
-print(gdf2)
 
+#print(gdf2)
 
-columns_to_remove = ['objtype', 'kartleggingsetappe', 'originaldatavert', 'områdeid', 'kopidato', 'navnerom', 'lokalid', '_clipped', 'geometry']
-df_for_models = gdf.drop(columns=columns_to_remove)
-df_with_all = gdf
+print("Removing columns")
+columns_to_remove = ['objtype', 'kartleggingsetappe', 'originaldatavert', 'områdeid', 'kopidato', 'navnerom', 'lokalid', 'geometry']
+df_for_models = soilquality.drop(columns=columns_to_remove)
+df_with_all = soilquality
 
-df_for_models.to_csv('data/soilquality_refined.csv')
-df_with_all.to_csv('data/soilquality.csv')
-gdf2.to_csv('data/soil.csv')
+print("Converting to csv")
+df_for_models.to_csv(os.path.join(soilquality_path, 'soilquality_refined.csv'))
+df_with_all.to_csv(os.path.join(soilquality_path, 'soilquality.csv'))
+jordsmonn.to_csv(os.path.join(soilquality_path, 'jordsmonn.csv'))
