@@ -107,5 +107,7 @@ WEATHER_TYPES = DotDict({
     'TEMPERATURE': 'temperature',
     'PRECIPITATION': 'precipitation',
     'DAYDEGREE0': 'daydegree0',
-    'DAYDEGREE5': 'daydegree5'
+    'DAYDEGREE5': 'daydegree5',
+    'GROUND': 'ground',
+    'SUNLIGHT': 'sunlight'
 })

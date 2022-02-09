@@ -88,4 +88,16 @@ def raw_frost_readings_to_file(from_date, to_date, growth_season, weather_type, 
         temperature_time_resolutions = ''
         download_raw_weather_data('daydegree5', from_date, to_date, growth_season, frost_sources,
                                   temperature_frost_elements, temperature_time_resolutions, client_id)
+
+    elif weather_type == WEATHER_TYPES.GROUND:
+        temperature_frost_elements = 'state_of_ground'
+        temperature_time_resolutions = ''
+        download_raw_weather_data('ground', from_date, to_date, growth_season, frost_sources,
+                                  temperature_frost_elements, temperature_time_resolutions, client_id)
+
+    elif weather_type == WEATHER_TYPES.SUNLIGHT:
+        temperature_frost_elements = 'sum(duration_of_sunshine P1D)'
+        temperature_time_resolutions = ''
+        download_raw_weather_data(WEATHER_TYPES.SUNLIGHT, from_date, to_date, growth_season, frost_sources,
+                                  temperature_frost_elements, temperature_time_resolutions, client_id)
     print("... Done.")
