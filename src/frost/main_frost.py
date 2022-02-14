@@ -1,4 +1,4 @@
-# from fill_weather_by_proximity import assign_to_farmer_and_fill_by_proximity
+from fill_weather_by_proximity import assign_to_farmer_and_fill_by_proximity
 from preprocess_weather import preprocess_weather
 from source_weather_to_file import raw_frost_readings_to_file
 from utils import WEATHER_TYPES
@@ -43,4 +43,4 @@ if __name__ == '__main__':
 		# preprocess_weather(start_date, end_date, WEATHER_TYPES.GROUND)
 		# preprocess_weather(start_date, end_date, WEATHER_TYPES.SUNLIGHT)
 
-		# assign_to_farmer_and_fill_by_proximity(start_date, end_date, precipitation)
+		assign_to_farmer_and_fill_by_proximity(start_date, end_date, WEATHER_TYPES.PRECIPITATION)

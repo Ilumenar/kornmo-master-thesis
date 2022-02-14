@@ -43,7 +43,7 @@ def append_df_to_csv(df, csv_file_path, sep=","):
 
 
 def get_weather_file_path(start_date, end_date, weather_type, file_type):
-    return f'data/{file_type}/{weather_type}_{file_type}_{start_date}_to_{end_date}.csv'
+    return f'../../../kornmo-data-files/raw-data/weather-data/{file_type}/{weather_type}/{file_type}_{start_date}_to_{end_date}.csv'
 
 
 def distance(origin, destination):
