@@ -24,11 +24,10 @@ print("Reading jordkvalitet_norge.gdb")
 
 soilquality = gpd.read_file(os.path.join(soilquality_path, 'soil-quality.gdb'), driver='FileGDB', layer=0)
 soilquality = soilquality.dropna()
-print(type(soilquality.iloc[0]['geometry']))
 
 
-
-#print(gdf2)
+print("Creating jordsmonn for geometry and municipal_id")
+jordsmonn_geometry = jordsmonn[['KOMID', 'geometry']]
 
 print("Removing columns")
 columns_to_remove = ['objtype', 'kartleggingsetappe', 'originaldatavert', 'områdeid', 'kopidato', 'navnerom', 'lokalid', 'geometry']
@@ -39,3 +38,4 @@ print("Converting to csv")
 df_for_models.to_csv(os.path.join(soilquality_path, 'soilquality_refined.csv'))
 df_with_all.to_csv(os.path.join(soilquality_path, 'soilquality.csv'))
 jordsmonn.to_csv(os.path.join(soilquality_path, 'jordsmonn.csv'))
+jordsmonn_geometry.to_csv(os.path.join(soilquality_path, 'jordsmonn_geometry.csv'))
