@@ -71,7 +71,7 @@ def preprocess_weather(start_date, end_date, weather_type):
 
     total_row_count = sum(1 for line in open(source_filename))
     # Process 50 rows at a time
-    chunksize = 50
+    chunksize = 300
     chunks_processed = 0
     max_chunks = total_row_count // chunksize
 
@@ -80,15 +80,17 @@ def preprocess_weather(start_date, end_date, weather_type):
         print(f"Removed existing file {new_filepath}")
         os.remove(new_filepath)
 
-    print("---- Splitting weather into columns ----")
-    print(f"Weather type: {weather_type}")
+    print("---- Splitting frost data into columns ----")
+    print(f"Frost data type: {weather_type}")
     print(f"Total rows to process: {total_row_count}")
     print(f"Splitting the work into chunks of {chunksize}")
     print(f"Results found in path: {new_filepath}")
 
     for chunk in pd.read_csv(source_filename, chunksize=chunksize):
+        # print(chunk)
         df = chunk.dropna().reset_index(drop=True)
         df["data"] = df["data"].apply(eval)
+
 
         stations_exploded_df = (df.pipe(explode_on_column, 'data')
                                 .pipe(with_dict_as_columns, 'data')
@@ -111,6 +113,12 @@ def preprocess_weather(start_date, end_date, weather_type):
                     station_df = process_single_value_columns(station_df, station_exploded_df, date, index)
 
                 elif weather_type == WEATHER_TYPES.DAYDEGREE0 or weather_type == WEATHER_TYPES.DAYDEGREE5:
+                    station_df = process_single_value_columns(station_df, station_exploded_df, date, index)
+
+                elif weather_type == WEATHER_TYPES.GROUND:
+                    station_df = process_single_value_columns(station_df, station_exploded_df, date, index)
+
+                elif weather_type == WEATHER_TYPES.SUNLIGHT:
                     station_df = process_single_value_columns(station_df, station_exploded_df, date, index)
 
                 else:
