@@ -37,11 +37,19 @@ def jordsmonn_to_numeric():
 def correlation_matrix():
     soil_quality = pd.read_csv('../../kornmo-data-files/raw-data/soil-data/jordsmonn-numeric.csv', low_memory=False)
 
-    soil_quality.drop(['Unnamed: 0'], axis=1, inplace=True)
+    soil_quality.drop(['Unnamed: 0', 'DK_ASPARG', 'DK_BETER', 'DK_BLOMK', 'DK_BONNER', 'DK_GRAS_N',
+        'DK_GRAS_V', 'DK_GULROT', 'DK_HODEK', 'DK_KALROT', 'DK_KINAK', 'DK_LOK', 'DK_MAIS', 'DK_MANDEL',
+        'DK_POTET_N', 'DK_POTET_V', 'DK_PURRE', 'DK_ROSENK', 'DK_SALAT',
+        'DK_SELLERI', 'DK_TIDLIG', 'DK_VORLOK', 'DK_VRAPS', 'DK_VRYBS', 'AA_ASPARG', 'AA_BETER', 'AA_BLOMK',
+        'AA_BONNER', 'AA_GRAS_N',
+        'AA_GRAS_V', 'AA_GULROT', 'AA_HODEK', 'AA_KALROT', 'AA_KINAK',
+        'AA_LOK', 'AA_MAIS', 'AA_MANDEL',
+        'AA_POTET_N', 'AA_POTET_V', 'AA_PURRE', 'AA_ROSENK', 'AA_SALAT',
+        'AA_SELLERI', 'AA_TIDLIG', 'AA_VORLOK', 'AA_VRAPS', 'AA_VRYBS'], axis=1, inplace=True)
 
     matrix = soil_quality.corr().round(2)
 
-    fig, ax = plt.subplots(figsize=(46, 46))
+    fig, ax = plt.subplots(figsize=(20, 20))
     mask = np.triu(np.ones_like(matrix, dtype=bool))
     sns.heatmap(matrix, annot=True, mask=mask, vmax=1, vmin=-1, center=0, cmap='vlag')
     plt.show()
@@ -49,5 +57,5 @@ def correlation_matrix():
     print("Done plotting")
 
 
-jordsmonn_to_numeric()
+# jordsmonn_to_numeric()
 correlation_matrix()
