@@ -1,4 +1,3 @@
-from re import X
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -8,10 +7,11 @@ from shapely import wkt
 import matplotlib.pyplot as plt
 import os, sys
 from satellite_images import read_sat_images_file
-from utils import boundingBox
 from fiona import collection
 from fiona.crs import from_epsg
 from pyproj import Proj, Transformer, transform
+from utils import boundingBox
+
 
 data_location = "E:/Universitetet i Agder/Mikkel Andreas Kvande - kornmo-data-files/raw-data"
 

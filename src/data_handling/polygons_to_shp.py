@@ -7,11 +7,10 @@ from tqdm import  tqdm
 import pandas as pd
 from shapely import wkt
 
-data_location = "E:/Universitetet i Agder/Mikkel Andreas Kvande - kornmo-data-files/raw-data/soil-data"
 
 def get_polygon_data(nrows=None):
     
-    soilquality = pd.read_csv(os.path.join(data_location, 'jordsmonn_geometry.csv'), dtype=str, nrows=nrows)
+    soilquality = pd.read_csv('../kornmo-data-files/raw-data/soil-data/jordsmonn_geometry.csv', dtype=str, nrows=nrows)
     soilquality = soilquality.dropna()
     soilquality['geometry'] = soilquality['geometry'].apply(wkt.loads)
     geo_soilquality = gpd.GeoDataFrame(soilquality, crs='epsg:4326')
