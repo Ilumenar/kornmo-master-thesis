@@ -1,21 +1,21 @@
 import math
 import matplotlib.pyplot as plt
 import numpy as np
+import rasterio
+from fiona import collection
+from fiona.crs import from_epsg
+from shapely.geometry import mapping
 
-
+#Groups a dataframe, gdf, by column, counts the values and plots it as a bar plot. 
 def plot_bar(gdf, column):
     plt.figure()
     gdf.groupby(column)[column].count().plot(kind='bar')
     plt.show()
 
 
-def highlight_optimized_natural_color(B):
-    g = 0.6
-    B = [B[3] * g, B[2] * g, B[1] * g]
-    return [B[0]**(1/3) - 0.035, B[1]**(1/3) - 0.035, B[2]**(1/3) - 0.035]
-    
 true_color = lambda x: [x[3], x[2], x[1]]
 
+#Extracts the r, g and b-values from the 12-band satellite images and normalizes the values.
 def to_rgb(img, map_func=true_color, normalize=True):
     shape = img.shape
     newImg = []    
@@ -105,3 +105,33 @@ def boundingBox(latitudeInDegrees, longitudeInDegrees, halfSideInKm):
     lng_max = lng + halfSide/pradius
 
     return (rad2deg(lng_min), rad2deg(lat_min),rad2deg(lng_max), rad2deg(lat_max))
+
+
+#Writes the inputted polygons to the file called filename.
+def write_polygons_to_shp(polygons, filename):
+    schema = {'geometry': 'Polygon'}
+    with collection('../shapefiles/' + filename + '.shp', "w", crs=from_epsg(4326), driver="ESRI Shapefile", schema=schema) as output:
+        for polygon in polygons:
+            output.write({'geometry': mapping(polygon)})
+    output.close()
+
+#Plots the inputted polygons as pyplot
+def plot_polygons(polygons):
+    for p in polygons:
+        plt.plot(*p.exterior.xy)
+
+#Converts a png-image, named by the input 'orgnr' and converts it to a geotiff file that can be shown in qgis.
+#The positional data is fetched from a bounding_box created by the BoundingBox method. 
+def png_to_geotiff(org_nr, bounding_box):
+    dataset = rasterio.open(org_nr + '.png', 'r')
+    bands = [1, 2, 3]
+    data = dataset.read(bands)
+    transform = rasterio.transform.from_bounds(bounding_box[0], bounding_box[1], bounding_box[2], bounding_box[3], data.shape[1], data.shape[2])
+    crs = {'init': 'epsg:4326'}
+
+    with rasterio.open(org_nr + '.tif', 'w', driver='GTiff',
+                    width=data.shape[1], height=data.shape[2],
+                    count=3, dtype=data.dtype,
+                    transform=transform, crs=crs) as dst:
+        dst.write(data, indexes=bands)
+
