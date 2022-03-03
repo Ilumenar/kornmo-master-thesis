@@ -24,7 +24,7 @@ def get_all_frost_sources(frost_client_id):
     return pd.DataFrame(data)
 
 
-def download_frost_sources_to_file(target_file_path, frost_client_key):
+def get_frost_weather_sources_to_file(frost_client_key):
     frost_sources_df = get_all_frost_sources(frost_client_key).dropna(subset=['geometry'])
 
     # Apply lng and lat to sources as easily accessible columns
@@ -32,11 +32,7 @@ def download_frost_sources_to_file(target_file_path, frost_client_key):
     frost_sources_df['lat'] = frost_sources_df['geometry'].apply(lambda x: x['coordinates'][1])
 
     # Save as csv.
+    target_file_path = '../../../kornmo-data-files/raw-data/weather-data/frost_weather_sources.csv'
     frost_sources_df.to_csv(target_file_path, index=False)
 
-
-def download_frost_sources(client_id):
-    target_file_path = '../../../kornmo-data-files/raw-data/weather-data/frost_sources.csv'
-
-    download_frost_sources_to_file(target_file_path, client_id)
-    return "Done"
+    print(f"\n Done with downloading all frost weather sources\n")

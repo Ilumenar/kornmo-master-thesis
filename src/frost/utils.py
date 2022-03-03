@@ -63,9 +63,9 @@ def distance(origin, destination):
 
     Examples
     --------
-    >>> origin = (48.1372, 11.5756)  # Munich
-    >>> destination = (52.5186, 13.4083)  # Berlin
-    >>> round(distance(origin, destination), 1)
+    origin = (48.1372, 11.5756)  # Munich
+    destination = (52.5186, 13.4083)  # Berlin
+    round(distance(origin, destination), 1)
     504.2
     """
     lat1, lon1 = origin
