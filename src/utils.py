@@ -5,6 +5,14 @@ import rasterio
 from fiona import collection
 from fiona.crs import from_epsg
 from shapely.geometry import mapping
+import pyproj
+from shapely.ops import transform
+import pandas as pd
+import geopandas as gpd
+import os
+from shapely import wkt
+
+data_location = "../../../kornmo-data-files/raw-data"
 
 #Groups a dataframe, gdf, by column, counts the values and plots it as a bar plot. 
 def plot_bar(gdf, column):
@@ -115,6 +123,11 @@ def write_polygons_to_shp(polygons, filename):
             output.write({'geometry': mapping(polygon)})
     output.close()
 
+def polygon_to_shp_by_orgnr(orgnr, filename):
+    disp_properties = get_disp_eiendommer()
+    polygon = disp_properties.loc[disp_properties['orgnr'] == orgnr].iloc[0]['geometry']
+    write_polygons_to_shp(convert_crs([polygon]), filename)
+
 #Plots the inputted polygons as pyplot
 def plot_polygons(polygons):
     for p in polygons:
@@ -135,3 +148,22 @@ def png_to_geotiff(org_nr, bounding_box):
                     transform=transform, crs=crs) as dst:
         dst.write(data, indexes=bands)
 
+def convert_crs(polygons):
+    project = pyproj.Transformer.from_proj(pyproj.Proj('epsg:25833'), pyproj.Proj('epsg:4326'), always_xy=True)
+    return [transform(project.transform, poly) for poly in polygons]
+
+def read_jordsmonn_geometry():
+    print("Reading 'jordsmonn_geometry'...")
+    jordsmonn_geometry = pd.read_csv(os.path.join(data_location, 'soil-data/jordsmonn_geometry.csv'))
+    jordsmonn_geometry = jordsmonn_geometry.dropna()
+    jordsmonn_geometry['geometry'] = jordsmonn_geometry['geometry'].apply(wkt.loads)
+    jordsmonn_geometry = gpd.GeoDataFrame(jordsmonn_geometry, crs='epsg:4326')
+    return jordsmonn_geometry
+
+def get_disp_eiendommer():
+    print("Reading 'disponerte_eiendommer.gpkg'...")
+    disp_eien = gpd.read_file(os.path.join(data_location, 'farm-information/farm-properties/disposed-properties-previous-students/disponerte_eiendommer.gpkg'), layer='disponerte_eiendommer')
+    disp_eien = disp_eien.dropna()
+    disp_eien.drop_duplicates(['orgnr', 'geometry'], keep='first', inplace=True)
+    disp_eien['orgnr'] = disp_eien['orgnr'].astype(str)
+    return disp_eien
