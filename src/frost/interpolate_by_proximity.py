@@ -1,6 +1,7 @@
+import numpy as np
 import pandas as pd
 import sys
-
+from statistics import mean
 from utils import get_weather_file_path, distance
 
 
@@ -23,6 +24,7 @@ def assign_to_farmer_and_fill_by_proximity(start_date, end_date, weather_type):
 	farmers = pd.read_csv('../../../kornmo-data-files/raw-data/farm-information/farmer_elevation.csv').drop(columns=['Unnamed: 0']).dropna()
 
 	farmers_with_weather = []
+	ws_distance = []
 
 	number_of_farmers = farmers.shape[0]
 	new_file_path = get_weather_file_path(start_date, end_date, weather_type, 'by_proximity')
@@ -42,6 +44,8 @@ def assign_to_farmer_and_fill_by_proximity(start_date, end_date, weather_type):
 			method='bfill').head(1)
 		farmer_weather_df['orgnr'] = farmer.orgnr
 
+		ws_distance.append(int(farmer_weather_df['ws_distance'].values[0]))
+
 		if not farmer_weather_df.dropna().empty:
 			farmer_weather_df = farmer_weather_df.drop(['lng', 'lat'], axis=1)
 			closest_station_id = farmer_weather_df.iloc[0].id
@@ -56,6 +60,10 @@ def assign_to_farmer_and_fill_by_proximity(start_date, end_date, weather_type):
 		sys.stdout.write('\r')
 		sys.stdout.write(f'[{"=" * (index//200)}{" " * ((number_of_farmers - index)//200)}] {round((index / number_of_farmers + 1) * 100, 1)}%')
 		sys.stdout.flush()
+
 	print("\nDone.")
 	farmers_with_weather_df = pd.concat(farmers_with_weather, ignore_index=True)
+
+	farmers_with_weather_df['ws_distance'] = ws_distance
+
 	farmers_with_weather_df.to_csv(new_file_path, index=False)

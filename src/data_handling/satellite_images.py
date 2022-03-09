@@ -4,6 +4,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from tqdm import tqdm
 from PIL import Image
+
+
 img_location = 'E:/MasterThesisData/Satellite_Images'
 
 def read_images(filename, split=-1):
@@ -11,7 +13,7 @@ def read_images(filename, split=-1):
     with h5py.File(os.path.join(img_location, filename), "r") as f:
         images = f['images']
         for i, orgnum in enumerate(tqdm(images.keys(), total=split)):
-            if(split == i):
+            if (split == i):
                 break
             img_dicts = {}
             for year in images[orgnum]:
@@ -20,6 +22,7 @@ def read_images(filename, split=-1):
             sat_images[orgnum] = img_dicts
     f.close()
     return sat_images
+
 
 def read_sat_images_file(filename):
     images = {}
@@ -31,6 +34,7 @@ def read_sat_images_file(filename):
     f.close()
 
     return images
+
 
 def get_images_by_orgnr(orgnr):
     sat_images = {}
@@ -47,7 +51,7 @@ def get_images_by_orgnr(orgnr):
 
 def read_jordsmonn_h5():
     for filename in ['nibio_disposed_properties_masks.h5']: # , 'nibio_jordsmonn_100x100.h5']:
-        with h5py.File(os.path.join('../../../kornmo-data-files/raw-data/farm-information/farm-properties', filename), "r") as f:
+        with h5py.File(os.path.join('../../kornmo-data-files/raw-data/farm-information/farm-properties', filename), "r") as f:
             all_orgnr = {}
             print(f.keys())
 
@@ -63,7 +67,7 @@ def read_jordsmonn_h5():
             for nr in orgnr:
                 if nr in list(f['masks'].keys()):
                     images = f['masks'][nr]
-                    year = "2019"
+                    year = "2017"
                     img = images[year][()]
                     img = (img * 255).astype(np.uint8)
                     i = Image.fromarray(img)
@@ -73,4 +77,3 @@ def read_jordsmonn_h5():
 
 
 read_jordsmonn_h5()
-
