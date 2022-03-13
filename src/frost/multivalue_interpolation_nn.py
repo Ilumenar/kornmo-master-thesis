@@ -123,44 +123,8 @@ def train_multivalue_interpolation_model(train_x, train_y, val_x, val_y, weather
     return model
 
 
-def plot_multivalue(model, data_x, data_y):
-    predictions = model.predict(data_x)
-
-    plt.title('Ordered by actual values')
-
-    df = pd.DataFrame({
-        'actual_min': data_y[0].flatten(),
-        'prediction_min': predictions[0].flatten(),
-        'actual_mean': data_y[1].flatten(),
-        'prediction_mean': predictions[1].flatten(),
-        'actual_max': data_y[2].flatten(),
-        'prediction_max': predictions[2].flatten()
-    })
-
-    df = wiu.denormalize_temperature_prediction(df)
-
-    for thing in ['min', 'mean', 'max']:
-        df[f'abs_error_{thing}'] = abs(df[f'prediction_{thing}'] - df[f'actual_{thing}'])
-        print(f"Denormalized {thing} MAE: {df[f'abs_error_{thing}'].mean()}")
-
-        df = df.sort_values(by=f'actual_{thing}', ignore_index=True)
-
-        plt.plot(df[f'prediction_{thing}'], 'o', markersize=1, alpha=0.02, label=f"prediction {thing}", aa=False)
-        plt.plot(df[f'actual_{thing}'], '--', label=f'actual value {thing}')
-
-    plt.legend(loc="lower right")
-    plt.ylim(-30, 40)
-    plt.show()
-
-
-class NearestMultivalueNeighbourModel:
-    @staticmethod
-    def predict(data_x):
-        return data_x[:, 5:2:-1].T
-
-
 def create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, upper_bound):
-    data = create_multivalue_training_data(weather_feature).dropna()
+    data = create_multivalue_training_data(weather_feature)
 
     data = wiu.normalize_multivalue_inputs(data, lower_bound, upper_bound)
     data = wiu.normalize_multivalue_actual(data, lower_bound, upper_bound)
@@ -176,6 +140,3 @@ def create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, u
     val_y = val[y_columns].to_numpy().T
 
     model = train_multivalue_interpolation_model(train_x, train_y, val_x, val_y, weather_feature)
-
-    plot_multivalue(model, val_x, val_y)
-    plot_multivalue(NearestMultivalueNeighbourModel(), val_x, val_y)

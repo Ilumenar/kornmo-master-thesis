@@ -14,31 +14,6 @@ from interpolate_singlevalue_with_nn import generate_interpolated_singlevalue_fo
 from nan_preprocessing import remove_nan_and_validate
 
 
-# Download the weather readings for each of the sources of a given type
-#
-# raw_frost_readings_to_file(start_date, end_date, growth_season, WEATHER_TYPES.TEMPERATURE, client_id)
-# raw_frost_readings_to_file(start_date, end_date, growth_season, WEATHER_TYPES.DAYDEGREE0, client_id)
-# raw_frost_readings_to_file(start_date, end_date, growth_season, WEATHER_TYPES.DAYDEGREE5, client_id)
-# raw_frost_readings_to_file(start_date, end_date, growth_season, WEATHER_TYPES.GROUND, client_id)
-#
-
-# Process the readings
-# These files can be used for interpolation / filling in the blanks by
-# looking at the 2nd closest, etc.
-#
-# preprocess_weather(start_date, end_date, WEATHER_TYPES.TEMPERATURE)
-# preprocess_weather(start_date, end_date, WEATHER_TYPES.DAYDEGREE0)
-# preprocess_weather(start_date, end_date, WEATHER_TYPES.DAYDEGREE5)
-# preprocess_weather(start_date, end_date, WEATHER_TYPES.GROUND)
-
-# assign_to_farmer_and_fill_by_proximity(start_date, end_date, WEATHER_TYPES.PRECIPITATION)
-# assign_to_farmer_and_fill_by_proximity(start_date, end_date, WEATHER_TYPES.SUNLIGHT)
-
-# generate_interpolated_daydegree5_for_year(growth_season)
-
-# interpolation_daydegree5_nn()
-
-
 def first_run_processing(key):
     # Getting all FROST weather sources
     if os.path.exists('../../../kornmo-data-files/raw-data/weather-data/frost_weather_sources.csv'):
@@ -64,22 +39,16 @@ def find_lower_upper_bound(weather_feature):
         return -30, 30
 
     elif weather_feature == WEATHER_TYPES.DAYDEGREE5:
-        lower_bound = 5
-        # upper_bound = ??
+        return 0, 1
 
     elif weather_feature == WEATHER_TYPES.DAYDEGREE0:
-        lower_bound = 0
-        # upper_bound = ??
+        return 0, 1
 
     elif weather_feature == WEATHER_TYPES.GROUND:
-        placeholder = 0
-        # lower_bound = ??
-        # upper_bound = ??
+        return 0, 9
 
     elif weather_feature == WEATHER_TYPES.SUNLIGHT:
-        placeholder = 0
-        # lower_bound = ??
-        # upper_bound = ??
+        return 0, 1
 
     else:
         print(f"Received unvalid weather feature ({weather_feature}) while getting lower and upper bounds")
@@ -118,7 +87,8 @@ def get_and_process_feature_data(all_years, weather_feature):
         if weather_feature == WEATHER_TYPES.TEMPERATURE:
             generate_interpolated_multivalue_for_year(growth_season, weather_feature, lower_bound, upper_bound)
         else:
-            generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound)
+            generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, 0)
+
 
 
 if __name__ == '__main__':
@@ -128,9 +98,14 @@ if __name__ == '__main__':
 
     # first_run_processing(client_id)
 
+    create_and_train_singlevalue_interpolation_nn('sunlight', 0, 1)
+    generate_interpolated_singlevalue_for_year(2017, 'sunlight', 0, 1, 0)
+
+
+
     # get_and_process_feature_data(years, WEATHER_TYPES.SUNLIGHT)
-    get_and_process_feature_data(years, WEATHER_TYPES.PRECIPITATION)
-    get_and_process_feature_data(years, WEATHER_TYPES.TEMPERATURE)
+    # get_and_process_feature_data(years, WEATHER_TYPES.PRECIPITATION)
+    # get_and_process_feature_data(years, WEATHER_TYPES.TEMPERATURE)
     # get_and_process_feature_data(years, WEATHER_TYPES.DAYDEGREE0)
     # get_and_process_feature_data(years, WEATHER_TYPES.DAYDEGREE5)
     # get_and_process_feature_data(years, WEATHER_TYPES.GROUND)

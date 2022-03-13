@@ -7,7 +7,6 @@ from keras.layers import Dense, Dropout
 from keras.models import Sequential
 import matplotlib.pyplot as plt
 import tensorflow as tf
-from utils import WEATHER_TYPES
 
 
 def get_k_closest(sensors: pd.DataFrame, lat, lng, k: int):
@@ -105,38 +104,9 @@ def train_singlevalue_interpolation_model(train_x, train_y, val_x, val_y, weathe
     return model
 
 
-def plot_singlevalue(model, data_x, data_y):
-    predictions = model.predict(data_x)
-    df = pd.DataFrame({'actual': data_y.flatten(), 'prediction': predictions.flatten()})
-
-    df = wiu.denormalize_precipitation_prediction(df)
-    df['abs_error'] = abs(df['prediction'] - df['actual'])
-    print(f"Denormalized MAE: {df['abs_error'].mean()}")
-
-    plt.title('Ordered by actual values')
-
-    df = df.sort_values(by='actual', ignore_index=True)
-
-    plt.plot(df['prediction'], 'o', markersize=1, label="prediction", alpha=0.05, antialiased=False)
-    plt.plot(df['actual'], '--', label='actual value')
-    plt.legend(loc='upper left')
-
-    plt.ylim(-1, 40)
-
-    plt.show()
-
-
-class NearestSinglevalueNeighbourModel:
-    @staticmethod
-    def predict(data_x):
-        return data_x[:, 3]
-
-
 def create_and_train_singlevalue_interpolation_nn(weather_feature, lower_bound, upper_bound):
 
-
-
-    data = create_singlevalue_training_data(weather_feature).dropna()
+    data = create_singlevalue_training_data(weather_feature)
 
     data = wiu.normalize_singlevalue_inputs(data, lower_bound, upper_bound)
     data = wiu.normalize_singlevalue_actual(data, lower_bound, upper_bound)
@@ -150,6 +120,3 @@ def create_and_train_singlevalue_interpolation_nn(weather_feature, lower_bound, 
     val_y = val['station_x_actual'].to_numpy()
 
     model = train_singlevalue_interpolation_model(train_x, train_y, val_x, val_y, weather_feature)
-
-    plot_singlevalue(model, val_x, val_y)
-    plot_singlevalue(NearestSinglevalueNeighbourModel(), val_x, val_y)

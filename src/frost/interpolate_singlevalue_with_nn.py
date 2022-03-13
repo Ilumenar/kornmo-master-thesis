@@ -22,6 +22,9 @@ def get_k_closest_stations_singlevalue(sensors: pd.DataFrame, distances: pd.Data
     else:
         closest = distances.head(5 * k).merge(sensors, how='inner', left_on='id', right_on='station_id').head(k)
 
+    if len(closest) < k:
+        print(f"Could not find {k} stations: {closest}")
+
     series = pd.Series(dtype='float64')
     station_count = 0
     for station_id, station in closest.iterrows():
@@ -34,11 +37,11 @@ def get_k_closest_stations_singlevalue(sensors: pd.DataFrame, distances: pd.Data
     return series
 
 
-def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound):
+def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, starting_index):
 
     singlevalue_model = load_model(f'nn_interpolation_models/{weather_feature}_model.h5')
     # Tensorflow outputs some garbage on the first use, which ruins the progress bars, so let's get it over with.
-    singlevalue_model.predict(np.zeros(shape=(1, 18)))
+    singlevalue_model.predict(np.zeros(shape=(1, 12)))
 
     readings = pd.read_csv(f"../../../kornmo-data-files/raw-data/weather-data/processed/{weather_feature}/{weather_feature}_processed_{growth_season}-03-01_to_{growth_season}-10-01.csv")
     sensors = pd.read_csv(f"../../../kornmo-data-files/raw-data/weather-data/frost_weather_sources.csv", index_col="id")[['lng', 'lat', 'masl']]
@@ -58,8 +61,10 @@ def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, l
 
     n_days = get_number_of_days(readings)
 
-    p_bar = tqdm(range(n_days))
-    for day in p_bar:
+    if starting_index != 0:
+        farmers = pd.read_csv(f"../../../kornmo-data-files/raw-data/weather-data/nn_interpolated/{weather_feature}/{weather_feature}_interpolated_{growth_season}-03-01_to_{growth_season}-10-01.csv")
+
+    for day in range(starting_index, n_days):
         p_bar.set_description_str(f"Interpolating {weather_feature} {growth_season}, day {day} of {n_days - 1}")
         readings_for_day = readings[["station_id", "lat", "lng", "masl", f"day_{day}"]]
         readings_for_day = readings_for_day.rename(columns={f"day_{day}": "value"})
@@ -82,6 +87,8 @@ def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, l
         nn_prediction = singlevalue_model.predict(nn_input.to_numpy())
         farmers[f'day_{day}'] = wiu.denormalize_prediction(nn_prediction.flatten(), lower_bound, upper_bound)
 
-    print('saving...')
+        farmers.to_csv(f"../../../kornmo-data-files/raw-data/weather-data/nn_interpolated/{weather_feature}/{weather_feature}_interpolated_{growth_season}-03-01_to_{growth_season}-10-01.csv", float_format='%.1f')
+        print(f"Done interpolating {weather_feature} {growth_season}, day {day} of {n_days - 1}")
+
     farmers.to_csv(f"../../../kornmo-data-files/raw-data/weather-data/nn_interpolated/{weather_feature}/{weather_feature}_interpolated_{growth_season}-03-01_to_{growth_season}-10-01.csv", float_format='%.1f')
     print(f"Done with interpolating all values for {weather_feature} in {growth_season}")
