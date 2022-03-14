@@ -1,5 +1,4 @@
 import os
-
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
@@ -9,6 +8,7 @@ from keras.layers import Dense, Dropout
 from keras.models import Sequential
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from tqdm import tqdm
 
 weather_data_path = "../../../kornmo-data-files/raw-data/weather-data/"
 
@@ -19,8 +19,9 @@ def get_k_closest(sensors: pd.DataFrame, lat, lng, k: int):
     )
 
     new_sensors = sensors.sort_values(by=['distance']).head(k)
-    if len(new_sensors) != k:
-        print(f"Did not find K closest sensors for sensors: {sensors}")
+    if len(new_sensors) < k:
+        print(f"Could not find {k} stations: {new_sensors}")
+
     return new_sensors
 
 
@@ -44,12 +45,14 @@ def create_singlevalue_training_data(weather_feature, all_years) -> pd.DataFrame
     df: pd.DataFrame = pd.DataFrame()
 
     for year in range(all_years[0], all_years[-1]):
-        new_sensors: pd.DataFrame = pd.read_csv(os.path.join(weather_data_path, f'cleaned/{weather_feature}/{weather_feature}_processed_{year}-03-01_to_{year}-10-01.csv'), index_col='station_id').dropna()
+        print(f"Creating data for {weather_feature} in {year}")
+        new_sensors: pd.DataFrame = pd.read_csv(os.path.join(weather_data_path, f'cleaned/{weather_feature}/{weather_feature}_cleaned_{year}-03-01_to_{year}-10-01.csv'), index_col='station_id')
 
         new_sensors = new_sensors.join(frost_sources, 'station_id')
 
-        for day in range(214):
-            print(f'day {day}, {year}')
+        p_bar = tqdm(range(214))
+        for day in p_bar:
+            p_bar.set_description_str(f"Day {day} of {214}")
             for station_id, station in new_sensors.iterrows():
                 day_sensors = new_sensors[["lat", "lng", "masl", f"day_{day}"]]
                 day_sensors = day_sensors.rename(columns={f"day_{day}": "value"}).drop(station_id)
@@ -104,8 +107,6 @@ def train_singlevalue_interpolation_model(train_x, train_y, val_x, val_y, weathe
     plt.plot(history.history['val_loss'], label="val_loss")
     plt.legend()
     plt.show()
-
-    return model
 
 
 def create_and_train_singlevalue_interpolation_nn(weather_feature, lower_bound, upper_bound, all_years):

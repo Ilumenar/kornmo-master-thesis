@@ -96,7 +96,7 @@ if __name__ == '__main__':
     secret = '8756c739-6d4e-47ad-b893-28d80b218df3'
     years = [2017, 2018, 2019, 2020, 2021]
 
-    # Pick your desirec weather type
+    # Pick your desired weather type
     weather_type = WEATHER_TYPES.SUNLIGHT
 
     # Download all frost sources, and create dataset of farmers to use.

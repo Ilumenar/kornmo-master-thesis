@@ -11,7 +11,7 @@ weather_data_path = "../../../kornmo-data-files/raw-data/weather-data/"
 
 
 def get_k_closest_stations_singlevalue(sensors: pd.DataFrame, distances: pd.DataFrame, lat, lng, masl, k: int, weather_feature):
-    if weather_feature == WEATHER_TYPES.SUNLIGHT:
+    if weather_feature == WEATHER_TYPES.SUNLIGHT or weather_feature == WEATHER_TYPES.GROUND:
         closest = sensors.merge(distances, how='outer', left_on='station_id', right_on='id').head(k)
     else:
         closest = distances.head(5 * k).merge(sensors, how='inner', left_on='id', right_on='station_id').head(k)
