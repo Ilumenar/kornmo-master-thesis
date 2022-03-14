@@ -59,3 +59,12 @@ def normalize_multivalue_actual(nn_actual: DataFrame, lower, upper) -> DataFrame
 
 def denormalize_prediction(nn_prediction: DataFrame, lower, upper) -> DataFrame:
     return denormalize(nn_prediction, lower, upper)
+
+
+def get_number_of_days(readings):
+    n_days = 0
+    while True:
+        if any(f'day_{n_days}' in col_name for col_name in readings.columns):
+            n_days += 1
+        else:
+            return n_days

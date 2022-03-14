@@ -1,11 +1,8 @@
 import os
-
-from interpolate_with_nn import *
 from preprocess_weather_to_timeseries import preprocess_weather_data
 from raw_weather_readings import get_raw_weather_readings_to_file
 from utils import WEATHER_TYPES
 from frost_weather_sources import get_frost_weather_sources_to_file
-from add_features_to_dataset import add_feature_to_main_dataset
 from singlevalue_interpolation_nn import create_and_train_singlevalue_interpolation_nn
 from multivalue_interpolation_nn import create_and_train_multivalue_interpolation_nn
 from scripts.create_farmers_coordinates import create_farmers_information_dataset
@@ -13,8 +10,10 @@ from interpolate_multivalue_with_nn import generate_interpolated_multivalue_for_
 from interpolate_singlevalue_with_nn import generate_interpolated_singlevalue_for_year
 from nan_preprocessing import remove_nan_and_validate
 
+from find_measurements_by_proximity import assign_to_farmer_and_fill_by_proximity
 
-def first_run_processing(key):
+
+def get_frost_sources_and_create_farmers_dataset(key):
     # Getting all FROST weather sources
     if os.path.exists('../../../kornmo-data-files/raw-data/weather-data/frost_weather_sources.csv'):
         print(f"Dataset with all FROST weather sources already exists")
@@ -31,28 +30,17 @@ def first_run_processing(key):
 
 
 def find_lower_upper_bound(weather_feature):
-    # Todo: Finish all bounds
     if weather_feature == WEATHER_TYPES.PRECIPITATION:
         return 0, 100
 
     elif weather_feature == WEATHER_TYPES.TEMPERATURE:
         return -30, 30
 
-    elif weather_feature == WEATHER_TYPES.DAYDEGREE5:
-        return 0, 1
-
-    elif weather_feature == WEATHER_TYPES.DAYDEGREE0:
-        return 0, 1
-
     elif weather_feature == WEATHER_TYPES.GROUND:
         return 0, 9
 
-    elif weather_feature == WEATHER_TYPES.SUNLIGHT:
-        return 0, 1
-
     else:
-        print(f"Received unvalid weather feature ({weather_feature}) while getting lower and upper bounds")
-        return 0, 0
+        return 0, 1
 
 
 def get_start_end_date(year):
@@ -60,9 +48,6 @@ def get_start_end_date(year):
 
 
 def get_and_process_feature_data(all_years, weather_feature):
-    lower_bound, upper_bound = find_lower_upper_bound(weather_feature)
-
-    """
     for growth_season in all_years:
         start_date, end_date = get_start_end_date(growth_season)
 
@@ -72,23 +57,38 @@ def get_and_process_feature_data(all_years, weather_feature):
         # Process each reading in a day by day structure
         preprocess_weather_data(start_date, end_date, weather_feature)
 
+
+def clean_and_validate_dataset(all_years, weather_feature):
+    for growth_season in all_years:
+        start_date, end_date = get_start_end_date(growth_season)
+
         # Replace NaN values, clean and validate dataset
         remove_nan_and_validate(weather_feature, start_date, end_date)
-    """
+
+
+def create_and_train_interpolation_nn(all_years, weather_feature):
+    lower_bound, upper_bound = find_lower_upper_bound(weather_feature)
 
     # Train a NN for interpolation with correct farmers
     if weather_feature == WEATHER_TYPES.TEMPERATURE:
-        create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, upper_bound)
+        create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, upper_bound, all_years)
     else:
-        create_and_train_singlevalue_interpolation_nn(weather_feature, lower_bound, upper_bound)
+        create_and_train_singlevalue_interpolation_nn(weather_feature, lower_bound, upper_bound, all_years)
 
-    # Predict interpolation values
+
+def interpolate_measurements_by_distance(growth_season, weather_feature):
+    lower_bound, upper_bound = find_lower_upper_bound(weather_feature)
+
+    if weather_feature == WEATHER_TYPES.TEMPERATURE:
+        generate_interpolated_multivalue_for_year(growth_season, weather_feature, lower_bound, upper_bound)
+    else:
+        generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, 0)
+
+
+def find_measurement_by_proximity(all_years, weather_feature):
     for growth_season in all_years:
-        if weather_feature == WEATHER_TYPES.TEMPERATURE:
-            generate_interpolated_multivalue_for_year(growth_season, weather_feature, lower_bound, upper_bound)
-        else:
-            generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, 0)
-
+        start_date, end_date = get_start_end_date(growth_season)
+        assign_to_farmer_and_fill_by_proximity(start_date, end_date, weather_feature)
 
 
 if __name__ == '__main__':
@@ -96,22 +96,27 @@ if __name__ == '__main__':
     secret = '8756c739-6d4e-47ad-b893-28d80b218df3'
     years = [2017, 2018, 2019, 2020, 2021]
 
-    # first_run_processing(client_id)
+    # Pick your desirec weather type
+    weather_type = WEATHER_TYPES.SUNLIGHT
 
-    create_and_train_singlevalue_interpolation_nn('sunlight', 0, 1)
-    generate_interpolated_singlevalue_for_year(2017, 'sunlight', 0, 1, 0)
+    # Download all frost sources, and create dataset of farmers to use.
+    # get_frost_sources_and_create_farmers_dataset(client_id)
 
+    # Download all measurements for each year, and procces them into timeseries
+    # get_and_process_feature_data(years, weather_type)
 
+    # Replace all Nan values and validate the dataset before further use
+    clean_and_validate_dataset(years, weather_type)
 
-    # get_and_process_feature_data(years, WEATHER_TYPES.SUNLIGHT)
-    # get_and_process_feature_data(years, WEATHER_TYPES.PRECIPITATION)
-    # get_and_process_feature_data(years, WEATHER_TYPES.TEMPERATURE)
-    # get_and_process_feature_data(years, WEATHER_TYPES.DAYDEGREE0)
-    # get_and_process_feature_data(years, WEATHER_TYPES.DAYDEGREE5)
-    # get_and_process_feature_data(years, WEATHER_TYPES.GROUND)
+    if weather_type != WEATHER_TYPES.GROUND:
+        # Create training dataset and train a NN for measurement interpolation
+        create_and_train_interpolation_nn(years, weather_type)
 
-    # add_feature_to_main_dataset(WEATHER_TYPES.SUNLIGHT)
-    # add_feature_to_main_dataset(WEATHER_TYPES.PRECIPITATION)
+        # Predict the measurement through the NN for a specific year
+        interpolate_measurements_by_distance(2017, weather_type)
+
+    else:
+        find_measurement_by_proximity(years, weather_type)
 
 
 """
