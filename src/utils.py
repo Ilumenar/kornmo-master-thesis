@@ -14,7 +14,6 @@ from shapely import wkt
 
 
 if os.getlogin() == "Mikkel":
-    print("min")
     data_location = "../../kornmo-data-files/raw-data"
 else:
     data_location = "../../../kornmo-data-files/raw-data"
