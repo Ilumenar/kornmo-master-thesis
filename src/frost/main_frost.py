@@ -94,10 +94,10 @@ def find_measurement_by_proximity(all_years, weather_feature):
 if __name__ == '__main__':
     client_id = 'c114a6ef-9081-4c42-b41b-0b3344a08ac4'
     secret = '8756c739-6d4e-47ad-b893-28d80b218df3'
-    years = [2017, 2018, 2019, 2020, 2021]
+    years = [2018]
 
     # Pick your desired weather type
-    weather_type = WEATHER_TYPES.SUNLIGHT
+    weather_type = WEATHER_TYPES.DAYDEGREE0
 
     # Download all frost sources, and create dataset of farmers to use.
     # get_frost_sources_and_create_farmers_dataset(client_id)
@@ -108,15 +108,14 @@ if __name__ == '__main__':
     # Replace all Nan values and validate the dataset before further use
     clean_and_validate_dataset(years, weather_type)
 
-    if weather_type != WEATHER_TYPES.GROUND:
-        # Create training dataset and train a NN for measurement interpolation
-        create_and_train_interpolation_nn(years, weather_type)
+    # Create training dataset and train a NN for measurement interpolation
+    # create_and_train_interpolation_nn(years, weather_type)
 
-        # Predict the measurement through the NN for a specific year
-        interpolate_measurements_by_distance(2017, weather_type)
+    # Predict the measurement through the NN for a specific year
+    # interpolate_measurements_by_distance(2017, weather_type)
 
-    else:
-        find_measurement_by_proximity(years, weather_type)
+    # Or find measurements by proximity. Only used for Ground
+    # find_measurement_by_proximity(years, weather_type)
 
 
 """

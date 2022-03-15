@@ -85,7 +85,6 @@ def remove_nan_and_validate(weather_type, start_date, end_date):
 
     for index, row in p_bar:
         p_bar.set_description(f"Calculating for index {index}")
-    # for index, row in processes_dataset.iterrows():
         row = row.filter(regex="day_.*")
         missing = row.isna().sum().sum()
         missing_percentage = missing / measurement_days
