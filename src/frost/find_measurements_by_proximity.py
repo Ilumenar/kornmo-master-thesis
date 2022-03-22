@@ -15,7 +15,7 @@ def assign_to_farmer_and_fill_by_proximity(start_date, end_date, weather_feature
 	columns_to_keep = ['id', 'lng', 'lat'] + list(filter(lambda x: x.startswith('day_'), stations_with_weather_df.columns.tolist()))
 	stations_df = stations_with_weather_df[columns_to_keep]
 
-	farmers = pd.read_csv(f"../../../kornmo-data-files/raw-data/farm-information/all-farmers-with-location.csv")[['orgnr', 'longitude', 'latitude', 'elevation']]
+	farmers = pd.read_csv(f"../../../kornmo-data-files/raw-data/farm-information/farmers-with-coordinates-and-soil_quality.csv")[['orgnr', 'longitude', 'latitude', 'elevation']]
 	farmers_with_weather = []
 
 	number_of_farmers = farmers.shape[0]

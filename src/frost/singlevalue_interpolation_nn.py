@@ -41,7 +41,6 @@ def make_singlevalue_dataset_entry(lat, lng, masl, actual, closest: pd.DataFrame
 
 def create_singlevalue_training_data(weather_feature, all_years) -> pd.DataFrame:
     frost_sources = pd.read_csv(os.path.join(weather_data_path, 'frost_weather_sources.csv'), index_col=['id'])
-
     df: pd.DataFrame = pd.DataFrame()
 
     for year in range(all_years[0], all_years[-1]):
@@ -56,7 +55,9 @@ def create_singlevalue_training_data(weather_feature, all_years) -> pd.DataFrame
             for station_id, station in new_sensors.iterrows():
                 day_sensors = new_sensors[["lat", "lng", "masl", f"day_{day}"]]
                 day_sensors = day_sensors.rename(columns={f"day_{day}": "value"}).drop(station_id)
+
                 closest = get_k_closest(day_sensors, station.lat, station.lng, 3)
+
                 series: pd.Series = make_singlevalue_dataset_entry(
                     station.lat,
                     station.lng,
