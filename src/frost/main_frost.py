@@ -115,24 +115,5 @@ if __name__ == '__main__':
     # interpolate_measurements_by_distance(2018, weather_type)
 
     # Or find measurements by proximity. Only used for Ground
-    find_measurement_by_proximity(years, weather_type)
+    # find_measurement_by_proximity(years, weather_type)
 
-
-"""
-Progress status of Frost data processing:
-
-main_frost.py - Need to add the methods for each of the features, focusing on sunlight and precipitation for now.
-frost_weather_sources.py - Completed
-utils.py - Nothing to do here
-raw_weather_readings.py - Completed
-preprocess_weather_to_timeseries.py - Completed
-create_farmers_coordinates.py - Completed
-nan_preprocessing.py - Completed
-singlevalue_interpolation_nn.py - Completed
-multivalue_interpolation_nn.py
-interpolate_singlevalue_with_nn.py - Completed
-interpolate_multivalue_with_nn.py
-weather_interpolation_utils.py - Completed
-find_measurements_by_proximity.py - Completed
-
-"""
