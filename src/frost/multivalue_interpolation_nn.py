@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 from keras.models import Model
 from keras.layers import Dense, Input
+import os
+
+weather_data_path = "../../../kornmo-data-files/raw-data/weather-data/"
 
 
 def get_k_closest(sensors: pd.DataFrame, lat, lng, k: int):
@@ -37,15 +40,12 @@ def make_multivalue_dataset_entry(lat, lng, masl, min, mean, max, closest: pd.Da
     return day_series
 
 
-def create_multivalue_training_data(weather_feature) -> pd.DataFrame:
-    frost_sources = pd.read_csv('../../../kornmo-data-files/raw-data/weather-data/frost_weather_sources.csv',
-                                index_col=['id'])
+def create_multivalue_training_data(weather_feature, all_years) -> pd.DataFrame:
+    frost_sources = pd.read_csv(os.path.join(weather_data_path, 'frost_weather_sources.csv'), index_col=['id'])
     df: pd.DataFrame = pd.DataFrame()
 
-    for year in range(2017, 2021):
-        new_sensors: pd.DataFrame = pd.read_csv(
-            f'../../../kornmo-data-files/raw-data/weather-data/processed/{weather_feature}/{weather_feature}_processed_{year}-03-01_to_{year}-10-01.csv',
-            index_col='station_id').dropna()
+    for year in range(all_years[0], all_years[-1]):
+        new_sensors: pd.DataFrame = pd.read_csv(os.path.join(weather_data_path, f'cleaned/{weather_feature}/{weather_feature}_cleaned_{year}-03-01_to_{year}-10-01.csv'), index_col='station_id')
 
         new_sensors = new_sensors.join(frost_sources, 'station_id')
 
@@ -123,8 +123,8 @@ def train_multivalue_interpolation_model(train_x, train_y, val_x, val_y, weather
     return model
 
 
-def create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, upper_bound):
-    data = create_multivalue_training_data(weather_feature)
+def create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, upper_bound, all_years):
+    data = create_multivalue_training_data(weather_feature, all_years).dropna()
 
     data = wiu.normalize_multivalue_inputs(data, lower_bound, upper_bound)
     data = wiu.normalize_multivalue_actual(data, lower_bound, upper_bound)
@@ -139,4 +139,4 @@ def create_and_train_multivalue_interpolation_nn(weather_feature, lower_bound, u
     val_x = val.drop(y_columns, axis=1).to_numpy()
     val_y = val[y_columns].to_numpy().T
 
-    model = train_multivalue_interpolation_model(train_x, train_y, val_x, val_y, weather_feature)
+    train_multivalue_interpolation_model(train_x, train_y, val_x, val_y, weather_feature)
