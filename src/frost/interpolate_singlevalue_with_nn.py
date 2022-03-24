@@ -41,7 +41,7 @@ def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, l
     readings = readings.join(sensors, "station_id")
     readings = readings.reset_index()
 
-    farmers = pd.read_csv(f"../../../kornmo-data-files/raw-data/farm-information/all-farmers-with-location.csv")[['orgnr', 'longitude', 'latitude', 'elevation']]
+    farmers = pd.read_csv(f"../../../kornmo-data-files/raw-data/farm-information/farmers-with-coordinates-and-soil_quality.csv")[['orgnr', 'longitude', 'latitude', 'elevation']]
 
     farmer_distances = {}
     p_bar = tqdm(farmers.iterrows(), total=len(farmers))

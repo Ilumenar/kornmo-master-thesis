@@ -51,7 +51,7 @@ def create_farmers_information_dataset():
         print(f"ERROR! Found NaN in final dataset:")
         print(all_farmers.isna().sum())
 
-    all_farmers.to_csv("../../kornmo-data-files/raw-data/farm-information/geographic-location/all-farmers-with-location.csv")
+    all_farmers.to_csv("../../kornmo-data-files/raw-data/farm-information/farmers-with-coordinates-and-soil_quality.csv")
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ def get_frost_sources_and_create_farmers_dataset(key):
         get_frost_weather_sources_to_file(key)
 
     # Getting all farmers with their geographic information
-    if os.path.exists("../../../kornmo-data-files/raw-data/farm-information/all-farmers-with-location.csv"):
+    if os.path.exists("../../../kornmo-data-files/raw-data/farm-information/farmers-with-coordinates-and-soil_quality.csv"):
         print(f"Dataset for all unique farmers with coordinates already exists")
     else:
         print(f"Dataset for all unique farmers with coordinates does not exist. Greating one now, hold on tight.")
@@ -94,7 +94,7 @@ def find_measurement_by_proximity(all_years, weather_feature):
 if __name__ == '__main__':
     client_id = 'c114a6ef-9081-4c42-b41b-0b3344a08ac4'
     secret = '8756c739-6d4e-47ad-b893-28d80b218df3'
-    years = [2018]
+    years = [2017, 2018, 2019, 2020]
 
     # Pick your desired weather type
     weather_type = WEATHER_TYPES.DAYDEGREE5
@@ -112,26 +112,8 @@ if __name__ == '__main__':
     # create_and_train_interpolation_nn(years, weather_type)
 
     # Predict the measurement through the NN for a specific year
-    interpolate_measurements_by_distance(2018, weather_type)
+    # interpolate_measurements_by_distance(2018, weather_type)
 
     # Or find measurements by proximity. Only used for Ground
     # find_measurement_by_proximity(years, weather_type)
 
-
-"""
-Progress status of Frost data processing:
-
-main_frost.py - Need to add the methods for each of the features, focusing on sunlight and precipitation for now.
-frost_weather_sources.py - Completed
-utils.py - Nothing to do here
-raw_weather_readings.py - Completed
-preprocess_weather_to_timeseries.py - Completed
-create_farmers_coordinates.py - Completed
-nan_preprocessing.py - Completed
-singlevalue_interpolation_nn.py
-multivalue_interpolation_nn.py
-interpolate_singlevalue_with_nn.py
-interpolate_multivalue_with_nn.py
-weather_interpolation_utils.py - Completed
-
-"""
