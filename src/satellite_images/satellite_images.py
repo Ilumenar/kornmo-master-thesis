@@ -76,4 +76,4 @@ def read_jordsmonn_h5():
             f.close()
 
 
-read_jordsmonn_h5()
+
