@@ -262,14 +262,15 @@ class SentinelDatasetIterator:
         if show_progress:
             from tqdm import tqdm
             tuples = tqdm(tuples)
-
         for orgnr, year, t_list, data in tuples:
             new_data = func(orgnr, year, dict(data))
-            if isinstance(new_data, (tuple, list)):
-                for d in new_data:
-                    new_tuples.append((orgnr, year, t_list, {**data, **d}))
-            else:
-                new_tuples.append((orgnr, year, t_list, {**data, **new_data}))
+            # print(new_data)
+            if new_data:
+                if isinstance(new_data, (tuple, list)):
+                    for d in new_data:
+                        new_tuples.append((orgnr, year, t_list, {**data, **d}))
+                else:
+                    new_tuples.append((orgnr, year, t_list, {**data, **new_data}))
         
         return SentinelDatasetIterator(source=self, tuples=new_tuples)
 
