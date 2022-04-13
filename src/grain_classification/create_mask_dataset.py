@@ -27,12 +27,19 @@ def generate_mask_image(bbox, polygon):
     x_max = 100
     mask_img = Image.new('1', (x_max, y_max), 0)
 
+    print(bbox)
     geo_translator = GeoPointTranslator(bbox)
+
+    print(geo_translator.p0)
+    print(geo_translator.p1)
     shapes = [polygon.exterior.coords[:]]
     for shape in shapes:
         field_polygon = []
         for point in shape:
+            print(point[1])
+            print(point[0])
             xy = geo_translator.lat_lng_to_screen_xy(point[1], point[0])
+            print(xy)
             x = xy['x']
             y = xy['y']
             field_polygon.append((x, y_max - y))
@@ -44,14 +51,17 @@ def generate_mask_image(bbox, polygon):
 def insert_masks_to_h5(filename, data):
     keys_inserted = []
     for i, row in tqdm(data.iterrows(), total=data.shape[0], desc=f"Inserting masks..."):
+
         key = f"{int(row['orgnr'])}/{int(row['year'])}"
         if key not in keys_inserted:
+
             polygon = convert_crs([row['geometry']])[0]
             bbox = boundingBox(polygon.centroid.y, polygon.centroid.x, 1)
             bbox = box(bbox[0], bbox[1], bbox[2], bbox[3])
             mask_img = generate_mask_image(bbox, polygon)
             insert_mask(filename, key, mask_img)
             keys_inserted.append(key)
+            break
 
 
 def main():
@@ -63,10 +73,11 @@ def main():
     print("Reading training data")
     train_data_masks = gpd.read_file('../../../kornmo-data-files/raw-data/crop-classification-data/training_data.gpkg')
     print("Reading validation data")
-    val_data_masks = gpd.read_file('../../../kornmo-data-files/raw-data/crop-classification-data/validation_data.gpkg')
+    #val_data_masks = gpd.read_file('../../../kornmo-data-files/raw-data/crop-classification-data/validation_data.gpkg')
 
     insert_masks_to_h5(filename_train, train_data_masks)
-    insert_masks_to_h5(filename_val, val_data_masks)
+    #insert_masks_to_h5(filename_val, val_data_masks)
+
 
     with h5py.File(filename_train, "a") as file:
         print(f"Inserted training data for {len(list(file['masks'].keys()))} farms")
