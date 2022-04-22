@@ -264,7 +264,6 @@ class SentinelDatasetIterator:
             tuples = tqdm(tuples)
         for orgnr, year, t_list, data in tuples:
             new_data = func(orgnr, year, dict(data))
-            # print(new_data)
             if new_data:
                 if isinstance(new_data, (tuple, list)):
                     for d in new_data:
