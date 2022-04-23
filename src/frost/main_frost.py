@@ -80,7 +80,7 @@ def interpolate_measurements_by_distance(growth_season, weather_feature):
     lower_bound, upper_bound = find_lower_upper_bound(weather_feature)
 
     if weather_feature == WEATHER_TYPES.TEMPERATURE:
-        generate_interpolated_multivalue_for_year(growth_season, weather_feature, lower_bound, upper_bound)
+        generate_interpolated_multivalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, 0)
     else:
         generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, 0)
 
