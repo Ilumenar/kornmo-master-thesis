@@ -26,12 +26,12 @@ def add_mask_as_channel(mask, image_source):
     return np.concatenate((image_source, mask), axis=2)
 
 
-def apply_mask_to_image_series(mask, image_series):
-    return image_series * mask.reshape(1, 100, 100, 1)
+def apply_mask_to_image_series(mask, image_series, image_size=100):
+    return image_series * mask.reshape(1, image_size, image_size, 1)
 
 
-def apply_mask_to_image(mask, image):
-    return image * mask.reshape(100, 100, 1)
+def apply_mask_to_image(mask, image, image_size=100):
+    return image * mask.reshape(image_size, image_size, 1)
 
 
 def plot_masked_rgb_image(mask, single_image, transparency=0.0):

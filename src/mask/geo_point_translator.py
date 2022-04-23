@@ -10,7 +10,7 @@ class GeoPointTranslator:
     # of the sentinel image.
     radius = 6371  # Earth Radius in Km
 
-    def __init__(self, bounding_box_geo):
+    def __init__(self, bounding_box_geo, size=100):
         self.lng_min, self.lat_min, self.lng_max, self.lat_max = bounding_box_geo.exterior.bounds
         self.p0 = {
             'srcX': 0,
@@ -20,8 +20,8 @@ class GeoPointTranslator:
         }
 
         self.p1 = {
-            'srcX': 100,
-            'srcY': 100,
+            'srcX': size,
+            'srcY': size,
             'lat': self.lat_max,
             'lng': self.lng_max
         }

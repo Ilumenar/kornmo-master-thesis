@@ -23,15 +23,15 @@ class SentinelDataset:
     def __init__(self, file: str, create_if_missing=False):
         self.filename = file
         self.labels = self.__load_labels(create_if_missing)
-    
+
     def __len__(self):
         return len(self.labels)
-    
+
     def __iter__(self):
         it = SentinelDatasetIterator.from_dataset(self)
         for x in it:
             yield x
-    
+
     def __getitem__(self, key):
         it = SentinelDatasetIterator.from_dataset(self)
         return it[key]
@@ -43,11 +43,12 @@ class SentinelDataset:
         if not os.path.exists(self.filename):
             if not create_if_missing:
                 raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), self.filename)
-            
+
             with h5py.File(self.filename, "a") as file:
                 file.create_group("images")
 
         labels = []
+
         def visit_func(name, object):
             if not name.startswith("images") or not isinstance(object, h5py.Dataset):
                 return
@@ -75,7 +76,7 @@ class SentinelDataset:
                 print(f"Deleted image dataset '{label}'.")
         else:
             print(f"Image dataset '{label}' is already deleted.")
-    
+
     def store_images(self, images, farmer_id, year, compression: int = 2):
         # Convert image values to integer type
         data = (np.array(images) * self.INT_SCALE).astype(int)
@@ -87,7 +88,7 @@ class SentinelDataset:
                 del file[f"images/{farmer_id}/{year}"]
             else:
                 self.labels.append(label)
-            
+
             c_args = {}
             if compression > 0:
                 c_args = {'compression': 'gzip', 'compression_opts': compression}
@@ -95,10 +96,10 @@ class SentinelDataset:
 
     def contains(self, farmer_id, year):
         return f"images/{farmer_id}/{year}" in self.labels
-    
-    def copy_to(self, output_file: str, compression:int=0):
+
+    def copy_to(self, output_file: str, compression: int = 0):
         from tqdm.autonotebook import tqdm
-        
+
         c_args = {}
         if compression > 0:
             c_args = {'compression': 'gzip', 'compression_opts': compression}
@@ -112,7 +113,7 @@ class SentinelDataset:
     @staticmethod
     def combine_datasets(datasets, output_file: str, compression: int = 0):
         from tqdm import tqdm
-        
+
         c_args = {}
         if compression > 0:
             c_args = {'compression': 'gzip', 'compression_opts': compression}
@@ -133,7 +134,8 @@ class SentinelDataset:
 
 
 class SentinelImageSeriesSource:
-    def __init__(self, source: Union[h5py.Dataset, np.ndarray], orgnr, year, transformations: List[Callable], data) -> None:
+    def __init__(self, source: Union[h5py.Dataset, np.ndarray], orgnr, year, transformations: List[Callable],
+                 data) -> None:
         self.image_source = source
         self.__orgnr = orgnr
         self.__year = year
@@ -153,7 +155,7 @@ class SentinelImageSeriesSource:
                 images = transform(images)
 
         return images
-        
+
 
 class SentinelDatasetIterator:
     @staticmethod
@@ -162,7 +164,7 @@ class SentinelDatasetIterator:
         tuples = [(orgnr, year, [], {}) for orgnr, year in tuples]
         return SentinelDatasetIterator(dataset=dataset, tuples=tuples)
 
-    def __init__(self, 
+    def __init__(self,
                  dataset: SentinelDataset = None,
                  source=None,
                  tuples: List[Tuple[str, str, List[Callable], Dict[Any, Any]]] = None,
@@ -176,7 +178,7 @@ class SentinelDatasetIterator:
             self.__transformations = copy(source.__transformations) if transformations is None else transformations
             self.__tuples = copy(source.__tuples) if tuples is None else tuples
             self.__shuffle = source.__shuffle if shuffle is None else shuffle
-        
+
         else:  # Create a fresh instance with optionally provided arguments
             assert isinstance(dataset, SentinelDataset)
 
@@ -192,7 +194,7 @@ class SentinelDatasetIterator:
 
         n = int(len(self) * split_ratio)
         return it[:n], it[n:]
-    
+
     def filter(self, predicate: Union[Callable[[str, str, SentinelImageSeriesSource, Dict[Any, Any]], bool]]):
         '''
         Return an iterator with the elements of this iterator filtered by the supplied predicate.
@@ -212,7 +214,8 @@ class SentinelDatasetIterator:
         transformations = self.__transformations + [transformation]
         return SentinelDatasetIterator(source=self, transformations=transformations)
 
-    def transform(self, transformation: Union[Callable[[SentinelImageSeriesSource], Any], Callable[[str, str, SentinelImageSeriesSource, Dict[Any, Any]], Any]]):
+    def transform(self, transformation: Union[Callable[[SentinelImageSeriesSource], Any], Callable[
+        [str, str, SentinelImageSeriesSource, Dict[Any, Any]], Any]]):
         '''
         Apply a transformation that will be performed on the image source.
         The transformation function must take either a single parameter (img_source), or three parameters (orgnr, year, and img_source),
@@ -222,10 +225,12 @@ class SentinelDatasetIterator:
         new_tuples = []
         for orgnr, year, t_list, data in self.__tuples:
             new_tuples.append((orgnr, year, t_list + [transformation], data))
-        
+
         return SentinelDatasetIterator(source=self, tuples=new_tuples)
-        
-    def augment(self, transformations: List[Union[Callable[[SentinelImageSeriesSource], Any], Callable[[str, str, SentinelImageSeriesSource], Any]]], keep_original=True):
+
+    def augment(self, transformations: List[
+        Union[Callable[[SentinelImageSeriesSource], Any], Callable[[str, str, SentinelImageSeriesSource], Any]]],
+                keep_original=True):
         '''
         Apply multiple transformations that will be performed on the image source, generating more output images.
         Each transformation function must take either a single parameter (img_source), or three/four parameters (orgnr, year, img_source, [data]),
@@ -236,10 +241,10 @@ class SentinelDatasetIterator:
         for orgnr, year, t_list, data in self.__tuples:
             if keep_original:
                 tuples.append((orgnr, year, t_list, data))
-            
+
             for transformation in transformations:
                 tuples.append((orgnr, year, t_list + [transformation], data))
-        
+
         return SentinelDatasetIterator(source=self, tuples=tuples)
 
     def shuffled(self, should_shuffle=True):
@@ -248,7 +253,7 @@ class SentinelDatasetIterator:
         A shuffled dataset will shuffle itself for each call to the iterator.
         '''
         return SentinelDatasetIterator(source=self, shuffle=should_shuffle)
-    
+
     def with_data(self, func: Callable[[str, str, Dict], Dict], show_progress=False):
         '''
         Add key/value pairs of data that accompanies each image in the iterator.
@@ -264,19 +269,18 @@ class SentinelDatasetIterator:
             tuples = tqdm(tuples)
         for orgnr, year, t_list, data in tuples:
             new_data = func(orgnr, year, dict(data))
-            # print(new_data)
             if new_data:
                 if isinstance(new_data, (tuple, list)):
                     for d in new_data:
                         new_tuples.append((orgnr, year, t_list, {**data, **d}))
                 else:
                     new_tuples.append((orgnr, year, t_list, {**data, **new_data}))
-        
+
         return SentinelDatasetIterator(source=self, tuples=new_tuples)
 
     def __process_tuple(self, tuple, image_source):
-        orgnr, year, data  = itemgetter(0, 1, 3)(tuple)
-        
+        orgnr, year, data = itemgetter(0, 1, 3)(tuple)
+
         output = (orgnr, year, image_source, data)
         for transformation in self.__transformations:
             output = transformation(*output)
@@ -290,7 +294,7 @@ class SentinelDatasetIterator:
         :param shuffle: Whether to shuffle before iterating. Overides previous settings.
         :param transform: Whether to skip the applied transformation functions. Does not affect augmentations and image transforms.
         '''
-        
+
         kwargs = {}
         if shuffle is not None:
             kwargs["shuffle"] = shuffle
@@ -302,7 +306,7 @@ class SentinelDatasetIterator:
     def __iter__(self):
         if self.__shuffle:
             random.shuffle(self.__tuples)
-        
+
         filename = self.__dataset.filename
         with h5py.File(filename, "r") as file:
             for tuple in self.__tuples:
@@ -314,12 +318,12 @@ class SentinelDatasetIterator:
         tuples = self.__tuples
         if self.__shuffle:
             random.shuffle(tuples)
-        
+
         # If key is a slice, eg. [0:10], we return a new iterator over the sequence
         if isinstance(key, slice):
             tuples = tuples[key]
             return SentinelDatasetIterator(source=self, tuples=tuples)
-        
+
         # It's just an index
         elif isinstance(key, int):
             tuple = tuples[key]
@@ -333,7 +337,7 @@ class SentinelDatasetIterator:
 
         else:
             raise TypeError(f"Indices must be integers or slices, not {type(key)}")
-    
+
     def __len__(self):
         return len(self.__tuples)
 
