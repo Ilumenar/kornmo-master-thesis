@@ -5,7 +5,7 @@ from tqdm import tqdm
 from shapely.geometry import box
 from PIL import Image, ImageDraw
 
-from src.kornmo.mask.geo_point_translator import GeoPointTranslator
+from src.mask.geo_point_translator import GeoPointTranslator
 from src.utils import boundingBox, convert_crs
 
 
