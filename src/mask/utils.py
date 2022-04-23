@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 #from .geo_point_translator import GeoPointTranslator
 from PIL import Image, ImageDraw
 #from ..sentinel.prev_utils import highlight_optimized_natural_color, to_rgb, plot_image
-from src.kornmo.mask.geo_point_translator import GeoPointTranslator
+from src.mask.geo_point_translator import GeoPointTranslator
 
 
 def add_mask_as_channel_to_image(mask, img):
