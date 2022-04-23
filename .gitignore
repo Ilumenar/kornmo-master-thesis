@@ -137,3 +137,4 @@ data/
 venv/
 shapefiles/
 kornmo
+grain_classification/results
