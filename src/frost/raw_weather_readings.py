@@ -36,8 +36,6 @@ def download_raw_weather_data(weather_type, from_date, to_date, growth_season, f
     if os.path.exists(file_path):
         print("Deleted existing file before downloading")
         os.remove(file_path)
-    else:
-        print("The file does not exist")
 
     count_sources = frost_sources_df.shape[0]
     for index, frost_source in frost_sources_df.iterrows():

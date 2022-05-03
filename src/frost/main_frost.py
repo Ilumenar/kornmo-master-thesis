@@ -97,13 +97,13 @@ if __name__ == '__main__':
     years = [2017, 2018, 2019, 2020]
 
     # Pick your desired weather type
-    weather_type = WEATHER_TYPES.DAYDEGREE5
+    weather_type = WEATHER_TYPES.PRECIPITATION
 
     # Download all frost sources, and create dataset of farmers to use.
     # get_frost_sources_and_create_farmers_dataset(client_id)
 
     # Download all measurements for each year, and procces them into timeseries
-    # get_and_process_feature_data(years, weather_type)
+    get_and_process_feature_data(years, weather_type)
 
     # Replace all Nan values and validate the dataset before further use
     # clean_and_validate_dataset(years, weather_type)
