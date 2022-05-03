@@ -14,8 +14,8 @@ from src.mask.geo_point_translator import GeoPointTranslator
 from src.satellite_images.storage import SentinelDataset
 from src.utils import boundingBox, convert_crs
 
-NEW_IMAGES_PATH = 'E:/MasterThesisData/Satellite_Images/small_images_train.h5'
-NEW_MASKS_PATH = 'E:/MasterThesisData/Satellite_Images/small_masks_train.h5'
+NEW_IMAGES_PATH = 'E:/MasterThesisData/Satellite_Images/small_vegetation_indices_images_train.h5'
+NEW_MASKS_PATH = 'E:/MasterThesisData/Satellite_Images/small_vegetation_indices_masks_train.h5'
 
 
 def create_h5_file(filename):
@@ -34,9 +34,10 @@ def insert_data(filename, key, data):
 
 
 def read_data():
-    satellite_imgs = SentinelDataset('E:/MasterThesisData/Satellite_Images/satellite_images_train.h5')
+    satellite_imgs = SentinelDataset('E:/MasterThesisData/Satellite_Images/big_vegetation_indices.h5')
     centroid_coords = gpd.read_file('../../../kornmo-data-files/raw-data/farm-information/farm-properties/bounding-boxes-previous-students/disponerte_eiendommer_bboxes.shp')
     training_polys = gpd.read_file('../../../kornmo-data-files/raw-data/crop-classification-data/training_data.gpkg')
+    print(f"Done reading data")
     return satellite_imgs, centroid_coords, training_polys
 
 
