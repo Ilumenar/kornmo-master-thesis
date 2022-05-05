@@ -4,7 +4,7 @@ import geopandas as gpd
 from tqdm import tqdm
 from shapely.geometry import box
 from PIL import Image, ImageDraw
-
+import numpy as np
 from src.mask.geo_point_translator import GeoPointTranslator
 from src.utils import boundingBox, convert_crs
 
@@ -40,6 +40,25 @@ def generate_mask_image(bbox, polygon):
         ImageDraw.Draw(mask_img).polygon(field_polygon, outline=1, fill=1)
 
     return mask_img
+
+
+def generate_mask_image_from_polygons(bbox, field_geometries):
+
+    new_mask = np.zeros((100, 100))
+
+    for field_geometry in field_geometries:
+
+        field_polygon = convert_crs([field_geometry])[0]
+
+        temp_mask = generate_mask_image(bbox, field_polygon)
+        new_mask = new_mask + temp_mask
+
+    for i in range(100):
+        for j in range(100):
+            if new_mask[i][j] > 1:
+                new_mask[i][j] = 1
+
+    return new_mask
 
 
 def insert_masks_to_h5(filename, data):
