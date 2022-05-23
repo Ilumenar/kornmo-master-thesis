@@ -14,9 +14,9 @@ from shapely import wkt
 
 
 if os.getlogin() == "Mikkel":
-    data_location = "../../kornmo-data-files/raw-data"
+    data_location = "../../kornmo_old-data-files/raw-data"
 else:
-    data_location = "../../../kornmo-data-files/raw-data"
+    data_location = "../../../kornmo_old-data-files/raw-data"
 
 
 # Groups a dataframe, gdf, by column, counts the values and plots it as a bar plot.

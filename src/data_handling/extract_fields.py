@@ -8,7 +8,7 @@ import os
 import pyproj
 from src.satellite_images.satellite_images import read_sat_images_file
 
-data_location = "../../../kornmo-data-files/raw-data"
+data_location = "../../../kornmo_old-data-files/raw-data"
 
 
 def get_farmer_centroid(nrows=None):

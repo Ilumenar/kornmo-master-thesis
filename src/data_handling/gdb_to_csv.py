@@ -6,11 +6,11 @@ import os
 import sys
 
 print("Reading jordsmonn_norge")
-layers = fiona.listlayers('../kornmo-data-files/raw-data/soil-data/jordsmonn.gdb')
+layers = fiona.listlayers('../kornmo_old-data-files/raw-data/soil-data/jordsmonn.gdb')
 jordsmonn = gpd.GeoDataFrame()
 
 for layer in tqdm(layers, total=len(layers)):
-    new_gdf = gpd.read_file('../kornmo-data-files/raw-data/soil-data/jordsmonn.gdb', layer=layer)
+    new_gdf = gpd.read_file('../kornmo_old-data-files/raw-data/soil-data/jordsmonn.gdb', layer=layer)
     jordsmonn = pd.concat([jordsmonn, new_gdf])
 
 ids = range(0, jordsmonn.shape[0])
@@ -19,7 +19,7 @@ jordsmonn = jordsmonn.rename(columns = {'KOMID': 'municipal_nr'})
 
 print("Reading jordkvalitet_norge.gdb")
 
-soilquality = gpd.read_file('../kornmo-data-files/raw-data/soil-data/soil-quality.gdb', driver='FileGDB', layer=0)
+soilquality = gpd.read_file('../kornmo_old-data-files/raw-data/soil-data/soil-quality.gdb', driver='FileGDB', layer=0)
 soilquality = soilquality.dropna()
 
 
@@ -35,7 +35,7 @@ df_with_all = soilquality
 
 
 print("Converting to csv")
-df_for_models.to_csv(os.path.join('../kornmo-data-files/raw-data/soil-data', 'soilquality_refined.csv'))
-df_with_all.to_csv(os.path.join('../kornmo-data-files/raw-data/soil-data', 'soilquality.csv'))
-jordsmonn.to_csv(os.path.join('../kornmo-data-files/raw-data/soil-data', 'jordsmonn.csv'))
-jordsmonn_geometry.to_csv(os.path.join('../kornmo-data-files/raw-data/soil-data', 'jordsmonn_geometry.csv'))
+df_for_models.to_csv(os.path.join('../kornmo_old-data-files/raw-data/soil-data', 'soilquality_refined.csv'))
+df_with_all.to_csv(os.path.join('../kornmo_old-data-files/raw-data/soil-data', 'soilquality.csv'))
+jordsmonn.to_csv(os.path.join('../kornmo_old-data-files/raw-data/soil-data', 'jordsmonn.csv'))
+jordsmonn_geometry.to_csv(os.path.join('../kornmo_old-data-files/raw-data/soil-data', 'jordsmonn_geometry.csv'))

@@ -51,7 +51,7 @@ def get_images_by_orgnr(orgnr):
 
 def read_jordsmonn_h5():
     for filename in ['nibio_disposed_properties_masks.h5']: # , 'nibio_jordsmonn_100x100.h5']:
-        with h5py.File(os.path.join('../../kornmo-data-files/raw-data/farm-information/farm-properties', filename), "r") as f:
+        with h5py.File(os.path.join('../../kornmo_old-data-files/raw-data/farm-information/farm-properties', filename), "r") as f:
             all_orgnr = {}
             print(f.keys())
 

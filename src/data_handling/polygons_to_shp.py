@@ -10,7 +10,7 @@ from shapely import wkt
 
 def get_polygon_data(nrows=None):
     
-    soilquality = pd.read_csv('../kornmo-data-files/raw-data/soil-data/jordsmonn_geometry.csv', dtype=str, nrows=nrows)
+    soilquality = pd.read_csv('../kornmo_old-data-files/raw-data/soil-data/jordsmonn_geometry.csv', dtype=str, nrows=nrows)
     soilquality = soilquality.dropna()
     soilquality['geometry'] = soilquality['geometry'].apply(wkt.loads)
     geo_soilquality = gpd.GeoDataFrame(soilquality, crs='epsg:4326')

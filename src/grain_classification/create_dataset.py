@@ -62,8 +62,8 @@ def main():
     print(f"Created {planted_with_polygon.shape[0]} training data")
     print(f"Created {planted_unknown_with_polygon.shape[0]} validation data")
 
-    planted_with_polygon.to_file('../../../kornmo-data-files/raw-data/crop-grain_classification-data/training_data.gpkg', driver="GPKG")
-    planted_unknown_with_polygon.to_file('../../../kornmo-data-files/raw-data/crop-grain_classification-data/validation_data.gpkg', driver="GPKG")
+    planted_with_polygon.to_file('../../../kornmo_old-data-files/raw-data/crop-grain_classification-data/training_data.gpkg', driver="GPKG")
+    planted_unknown_with_polygon.to_file('../../../kornmo_old-data-files/raw-data/crop-grain_classification-data/validation_data.gpkg', driver="GPKG")
 
     print("Done")
 
