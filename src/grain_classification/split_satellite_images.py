@@ -1,7 +1,7 @@
 import geopandas as gpd
 from tqdm import tqdm
 
-from src.satellite_images.storage import SentinelDataset, SentinelDatasetIterator
+from kornmo.sentinel.storage import SentinelDataset, SentinelDatasetIterator
 
 
 data_path = '../../../kornmo-data-files/raw-data/crop-classification-data/'
@@ -28,6 +28,7 @@ def main():
 
     create_dataset(sd, sd_train, train_data)
     create_dataset(sd, sd_validation, val_data)
+
 
 if __name__ == '__main__':
     main()

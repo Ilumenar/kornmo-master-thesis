@@ -5,7 +5,7 @@ import numpy as np
 
 
 def jordsmonn_to_numeric():
-    soil_quality = pd.read_csv('../../kornmo-data-files/raw-data/soil-data/jordsmonn.csv', low_memory=False)
+    soil_quality = pd.read_csv('../../../kornmo-data-files/raw-data/soil-data/jordsmonn.csv', low_memory=False)
 
     # Removing unuseful features
     soil_quality.drop([
@@ -30,12 +30,12 @@ def jordsmonn_to_numeric():
             print("Found non-numeric feature")
             print(soil_quality[feature])
 
-    soil_quality.to_csv('../../kornmo-data-files/raw-data/soil-data/jordsmonn-numeric.csv')
+    soil_quality.to_csv('../../kornmo_old-data-files/raw-data/soil-data/jordsmonn-numeric.csv')
     print("Done converting dataset to numeric")
 
 
 def correlation_matrix():
-    soil_quality = pd.read_csv('../../kornmo-data-files/raw-data/soil-data/jordsmonn-numeric.csv', low_memory=False)
+    soil_quality = pd.read_csv('../../../kornmo-data-files/raw-data/soil-data/jordsmonn-numeric.csv', low_memory=False)
 
     soil_quality.drop(['Unnamed: 0', 'DK_ASPARG', 'DK_BETER', 'DK_BLOMK', 'DK_BONNER', 'DK_GRAS_N',
         'DK_GRAS_V', 'DK_GULROT', 'DK_HODEK', 'DK_KALROT', 'DK_KINAK', 'DK_LOK', 'DK_MAIS', 'DK_MANDEL',

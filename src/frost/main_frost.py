@@ -5,7 +5,7 @@ from utils import WEATHER_TYPES
 from frost_weather_sources import get_frost_weather_sources_to_file
 from singlevalue_interpolation_nn import create_and_train_singlevalue_interpolation_nn
 from multivalue_interpolation_nn import create_and_train_multivalue_interpolation_nn
-from scripts.create_farmers_coordinates import create_farmers_information_dataset
+from src.data_handling.create_farmers_coordinates import create_farmers_information_dataset
 from interpolate_multivalue_with_nn import generate_interpolated_multivalue_for_year
 from interpolate_singlevalue_with_nn import generate_interpolated_singlevalue_for_year
 from nan_preprocessing import remove_nan_and_validate
@@ -94,7 +94,7 @@ def find_measurement_by_proximity(all_years, weather_feature):
 if __name__ == '__main__':
     client_id = 'c114a6ef-9081-4c42-b41b-0b3344a08ac4'
     secret = '8756c739-6d4e-47ad-b893-28d80b218df3'
-    years = [2017, 2018, 2019, 2020]
+    years = [2018]
 
     # Pick your desired weather type
     weather_type = WEATHER_TYPES.PRECIPITATION
@@ -112,8 +112,26 @@ if __name__ == '__main__':
     # create_and_train_interpolation_nn(years, weather_type)
 
     # Predict the measurement through the NN for a specific year
-    # interpolate_measurements_by_distance(2018, weather_type)
+    interpolate_measurements_by_distance(2018, weather_type)
 
     # Or find measurements by proximity. Only used for Ground
     # find_measurement_by_proximity(years, weather_type)
 
+
+"""
+Progress status of Frost data processing:
+
+main_frost.py - Need to add the methods for each of the features, focusing on sunlight and precipitation for now.
+frost_weather_sources.py - Completed
+utils.py - Nothing to do here
+raw_weather_readings.py - Completed
+preprocess_weather_to_timeseries.py - Completed
+create_farmers_coordinates.py - Completed
+nan_preprocessing.py - Completed
+singlevalue_interpolation_nn.py
+multivalue_interpolation_nn.py
+interpolate_singlevalue_with_nn.py
+interpolate_multivalue_with_nn.py
+weather_interpolation_utils.py - Completed
+
+"""

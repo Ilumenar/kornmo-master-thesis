@@ -7,7 +7,8 @@ from src.utils import get_disp_eiendommer
 
 
 def get_data():
-    deliveries = pd.read_csv('../../../kornmo-data-files/raw-data/farm-information/grain-deliveries/farmer_deliveries_previous_students.csv')
+    deliveries = pd.read_csv(
+        '../../../kornmo-data-files/raw-data/farm-information/grain-deliveries/farmer_deliveries_previous_students.csv')
     deliveries = deliveries.loc[deliveries['year'].isin([2017, 2018, 2019])]
     disposed_prop = get_disp_eiendommer()
     return deliveries, disposed_prop

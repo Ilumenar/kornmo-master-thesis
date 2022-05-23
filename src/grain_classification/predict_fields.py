@@ -2,7 +2,7 @@ from tqdm import tqdm
 from keras.models import load_model
 import pandas as pd
 import tensorflow as tf
-from src.satellite_images.storage import SentinelDataset
+from kornmo.sentinel.storage import SentinelDataset
 from src.utils import to_rgb
 
 PREDICTED_VALUES_PATH = '../../../kornmo-data-files/raw-data/crop-classification-data/week_1_16/predicted_values.csv'

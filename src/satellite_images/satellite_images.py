@@ -8,6 +8,7 @@ from PIL import Image
 
 img_location = 'E:/MasterThesisData/Satellite_Images'
 
+
 def read_images(filename, split=-1):
     sat_images = {}
     with h5py.File(os.path.join(img_location, filename), "r") as f:

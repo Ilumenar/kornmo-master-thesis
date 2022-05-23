@@ -138,3 +138,4 @@ venv/
 shapefiles/
 kornmo_old
 /src/grain_classification/results/
+kornmo/data/

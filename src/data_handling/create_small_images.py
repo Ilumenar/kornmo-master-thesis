@@ -9,7 +9,7 @@ from shapely.geometry import box
 from tqdm import tqdm
 
 from src.mask.geo_point_translator import GeoPointTranslator
-from src.satellite_images.storage import SentinelDataset
+from kornmo.sentinel.storage import SentinelDataset
 from src.utils import boundingBox, convert_crs
 
 
@@ -37,7 +37,8 @@ def insert_data(filename, key, data):
 def read_data():
     satellite_imgs = SentinelDataset(SATELLITE_IMAGES_PATH)
     training_polys = gpd.read_file(POLYGONS_PATH)
-    centroid_coords = gpd.read_file('../../../kornmo-data-files/raw-data/farm-information/farm-properties/bounding-boxes-previous-students/disponerte_eiendommer_bboxes.shp')
+    centroid_coords = gpd.read_file(
+        '../../../kornmo-data-files/raw-data/farm-information/farm-properties/bounding-boxes-previous-students/disponerte_eiendommer_bboxes.shp')
     return satellite_imgs, centroid_coords, training_polys
 
 

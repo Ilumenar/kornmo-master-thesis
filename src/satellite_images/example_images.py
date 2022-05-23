@@ -1,4 +1,4 @@
-from storage import SentinelDataset
+from kornmo.sentinel.storage import SentinelDataset
 import os
 from src.utils import to_rgb
 import matplotlib.pyplot as plt
