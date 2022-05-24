@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from tqdm import tqdm
-from utils import distance
+from kornmo.frost.utils import distance
 
 
 weather_data_path = "../../../kornmo-data-files/raw-data/weather-data/"

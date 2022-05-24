@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
-import utils
+from kornmo.frost.utils import distance
 import weather_interpolation_utils as wiu
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -14,7 +14,7 @@ weather_data_path = "../../../kornmo-data-files/raw-data/weather-data/"
 
 def get_k_closest(sensors: pd.DataFrame, lat, lng, k: int):
     sensors['distance'] = sensors.apply(
-        lambda ws: utils.distance((lat, lng), (ws.lat, ws.lng)), axis=1)
+        lambda ws: distance((lat, lng), (ws.lat, ws.lng)), axis=1)
 
     new_sensors = sensors.sort_values(by=['distance']).head(k)
     if len(new_sensors) != k:

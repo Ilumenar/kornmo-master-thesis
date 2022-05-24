@@ -1,32 +1,5 @@
 from pandas import DataFrame
-
-
-def normalize(df, lower: float = None, upper: float = None) -> DataFrame:
-    """
-    :param df: The DataFrame where all columns will be normalized.
-    :param lower: if present, together with upper, this value will correspond to the normalized value of 0.
-    :param upper: if present, together with lower, this value will correspond to the normalized value of 1.
-    :return: The new normalized DataFrame
-    """
-
-    if lower is None:
-        lower = df.min()
-    if upper is None:
-        upper = df.max()
-
-    return (df - lower) / (upper - lower)
-
-
-def denormalize(df, lower: float, upper: float) -> DataFrame:
-    """
-    Denormalizes DataFrame
-    :param df: The DataFrame where all columns will be denormalized.
-    :param lower: The denormalized value of 0
-    :param upper: The denormalized value of 1
-    :return: The denormalized DataFrame
-    """
-
-    return df * (upper - lower) + lower
+from kornmo.kornmo_utils import normalize, denormalize
 
 
 def normalize_singlevalue_inputs(nn_input: DataFrame, lower, upper) -> DataFrame:

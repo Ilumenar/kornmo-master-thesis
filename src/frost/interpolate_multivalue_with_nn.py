@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
-from utils import distance
+from kornmo.frost.utils import distance
 from keras.models import load_model
 import weather_interpolation_utils as wiu
 from tqdm import tqdm

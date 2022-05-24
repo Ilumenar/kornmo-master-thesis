@@ -1,16 +1,15 @@
 import os
 import pandas as pd
 import numpy as np
-from utils import distance
+from kornmo.frost.utils import distance
 from keras.models import load_model
 import weather_interpolation_utils as wiu
 from tqdm import tqdm
-from utils import WEATHER_TYPES
 
 weather_data_path = "../../../kornmo-data-files/raw-data/weather-data/"
 
 
-def get_k_closest_stations_singlevalue(sensors: pd.DataFrame, distances: pd.DataFrame, lat, lng, masl, k: int, weather_feature):
+def get_k_closest_stations_singlevalue(sensors: pd.DataFrame, distances: pd.DataFrame, lat, lng, masl, k: int, weather_feature, WEATHER_TYPES):
     if weather_feature == WEATHER_TYPES.SUNLIGHT or weather_feature == WEATHER_TYPES.DAYDEGREE5:
         closest = sensors.merge(distances, how='outer', left_on='station_id', right_on='id').head(k)
     else:
@@ -31,7 +30,7 @@ def get_k_closest_stations_singlevalue(sensors: pd.DataFrame, distances: pd.Data
     return series
 
 
-def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, starting_index):
+def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, lower_bound, upper_bound, starting_index, WEATHER_TYPES):
     singlevalue_model = load_model(f'nn_interpolation_models/{weather_feature}_model.h5')
     # Tensorflow outputs some garbage on the first use, which ruins the progress bars, so let's get it over with.
     singlevalue_model.predict(np.zeros(shape=(1, 12)))
@@ -71,7 +70,8 @@ def generate_interpolated_singlevalue_for_year(growth_season, weather_feature, l
                 farmer.longitude,
                 farmer.elevation,
                 3,
-                weather_feature
+                weather_feature,
+                WEATHER_TYPES
             )
 
             nn_input = pd.concat([nn_input, closest_sensors.to_frame().T], ignore_index=True)
