@@ -4,7 +4,7 @@ Git repository for our masters thesis. Our experiments are located in the folder
 This repository uses https://github.com/putetrekk/kornmo.git as a submodule and uses much of this code as dependencies. 
 
 ## data_handling:
-data_handling consists of files and scripts for general data processing such as mask creation and calculating farmers coordinates.
+data_handling consists of files and scripts for general data processing such as mask creation for satellite images and calculating farmers coordinates.
 
 ## frost:
 frost contains all filed related to acquiring and processing meteorological data from the Frost API. 
