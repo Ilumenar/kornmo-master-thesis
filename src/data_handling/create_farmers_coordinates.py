@@ -6,7 +6,7 @@ from src.utils import get_disp_eiendommer, convert_crs
 
 
 TERRAIN_API_URL = 'https://api.mapbox.com/v4/mapbox.mapbox-terrain-v2/tilequery/'
-MAPBOX_API_KEY = "pk.eyJ1IjoibWFzdGVydGhlc2lzIiwiYSI6ImNrem85bG11dDF3OWoyb2xsbXd6NmtwcWoifQ.KY6Ar4sI88UYi2vhg21lPg"
+MAPBOX_API_KEY = None
 
 
 def create_farmers_information_dataset():
