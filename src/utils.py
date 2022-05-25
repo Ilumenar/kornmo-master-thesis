@@ -68,6 +68,19 @@ def normalize_img(img, new_max):
     return np.array(new_img)
 
 
+def normalize_2d_img(img, new_max):
+    min = np.min(img)
+    max = np.max(img)
+    new_img = []
+    for i, row in enumerate(img):
+        new_row = []
+        for j, pixel in enumerate(row):
+            # zi = (xi – min(x)) / (max(x) – min(x)) * 1,000
+            new_row.append((pixel - min) / (max - min) * new_max)
+        new_img.append(new_row)
+    return np.array(new_img)
+
+
 #
 # The following methods for calculating a bounding box in WGS84 is taken from:
 # https://stackoverflow.com/a/238558
