@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import numpy as np
 import sys
-from utils import append_df_to_csv, WEATHER_TYPES
+from kornmo.frost.utils import append_df_to_csv
 
 
 # ------------------- 2. Collects measurement data fom each station, for each day in the given year --------------------
@@ -55,7 +55,7 @@ def download_raw_weather_data(weather_type, from_date, to_date, growth_season, f
         sys.stdout.flush()
 
 
-def get_raw_weather_readings_to_file(from_date, to_date, growth_season, weather_type, client_id):
+def get_raw_weather_readings_to_file(from_date, to_date, growth_season, weather_type, client_id, WEATHER_TYPES):
     frost_sources = pd.read_csv('../../../kornmo-data-files/raw-data/weather-data/frost_weather_sources.csv')
     frost_elements = ""
     time_resolution = ""

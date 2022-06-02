@@ -3,7 +3,7 @@ import numpy as np
 import sys
 import os
 from datetime import datetime, timedelta
-from utils import explode_on_column, with_dict_as_columns, with_col_as_type_datetime, append_df_to_csv, WEATHER_TYPES
+from kornmo.frost.utils import explode_on_column, with_dict_as_columns, with_col_as_type_datetime, append_df_to_csv
 from warnings import simplefilter
 from collections import Counter
 
@@ -71,7 +71,6 @@ def process_simple_columns(station_df, station_exploded_df, date, index):
 
 def translate_ground_value(value):
 
-    # Todo: What does the zero value represent?
     if value == 0 or value == 1 or value == 2 or value == 3 or value == 4:
         return value
 
@@ -184,7 +183,7 @@ def process_ground_columns(station_df, station_exploded_df, date, index):
     return station_df
 
 
-def preprocess_weather_data(start_date, end_date, weather_type):
+def preprocess_weather_data(start_date, end_date, weather_type, WEATHER_TYPES):
     new_filepath = f'../../../kornmo-data-files/raw-data/weather-data/processed/{weather_type}/{weather_type}_processed_{start_date}_to_{end_date}.csv'
     source_filename = f'../../../kornmo-data-files/raw-data/weather-data/raw/{weather_type}/{weather_type}_raw_{start_date}_to_{end_date}.csv'
 

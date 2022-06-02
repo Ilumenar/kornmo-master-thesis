@@ -4,7 +4,6 @@ import math
 import numpy as np
 import warnings
 from tqdm import tqdm
-from utils import WEATHER_TYPES
 import matplotlib.pyplot as plt
 
 
@@ -67,7 +66,7 @@ def get_random_value(row):
     return random_value
 
 
-def remove_nan_and_validate(weather_type, start_date, end_date):
+def remove_nan_and_validate(weather_type, start_date, end_date, WEATHER_TYPES):
     processes_dataset = pd.read_csv(
         f'../../../kornmo-data-files/raw-data/weather-data/processed/{weather_type}/{weather_type}_processed_{start_date}_to_{end_date}.csv'
     )

@@ -12,11 +12,7 @@ import geopandas as gpd
 import os
 from shapely import wkt
 
-
-if os.getlogin() == "Mikkel":
-    data_location = "../../kornmo_old-data-files/raw-data"
-else:
-    data_location = "../../../kornmo_old-data-files/raw-data"
+data_location = "../../../kornmo_old-data-files/raw-data"
 
 
 # Groups a dataframe, gdf, by column, counts the values and plots it as a bar plot.
@@ -68,6 +64,19 @@ def normalize_img(img, new_max):
                 new_color = (color - min) / (max - min) * new_max
                 new_rgb.append(new_color)
             new_row.append(new_rgb)
+        new_img.append(new_row)
+    return np.array(new_img)
+
+
+def normalize_2d_img(img, new_max):
+    min = np.min(img)
+    max = np.max(img)
+    new_img = []
+    for i, row in enumerate(img):
+        new_row = []
+        for j, pixel in enumerate(row):
+            # zi = (xi – min(x)) / (max(x) – min(x)) * 1,000
+            new_row.append((pixel - min) / (max - min) * new_max)
         new_img.append(new_row)
     return np.array(new_img)
 
