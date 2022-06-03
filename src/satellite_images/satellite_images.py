@@ -6,7 +6,7 @@ from tqdm import tqdm
 from PIL import Image
 
 
-img_location = 'E:/MasterThesisData/Satellite_Images'
+img_location = 'data/sentinelhub/farm_based_images'
 
 
 def read_images(filename, split=-1):
