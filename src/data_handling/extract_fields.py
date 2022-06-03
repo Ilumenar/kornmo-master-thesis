@@ -8,7 +8,7 @@ import os
 import pyproj
 from src.satellite_images.satellite_images import read_sat_images_file
 
-data_location = "../../../kornmo_old-data-files/raw-data"
+data_location = "../../kornmo_old-data-files/raw-data"
 
 
 def get_farmer_centroid(nrows=None):
@@ -58,14 +58,6 @@ def filter_data():
     field_data = get_polygon_data()
     disp_eien = get_disp_eiendommer()
 
-    # Only keep data that have common orgnrs
-    # sat_orgnr = np.array(get_combined_satellite_data())
-    # farm_orgnr = np.array(list(disp_eien['orgnr']))
-    # intersection = np.intersect1d(sat_orgnr, farm_orgnr)
-    # filtered_disp_eien = disp_eien[disp_eien['orgnr'].isin(intersection)]
-
-    # print(f"Amount of fields from disposed properties: {filtered_disp_eien.shape}")
-    # print(f"Amount of organisation numbers from satellite data: {len(filtered_satellite_data)}")
     print(f"\nAmount of fields from jordsmonn: {field_data.shape}")
     print(f"Amount of organization numbers from disposed properties: {len(set(disp_eien['orgnr'].tolist()))}")
 
@@ -125,7 +117,7 @@ if __name__ == '__main__':
     intersections_df = extract_orgnr_per_field(field_data, filtered_disp_eien)
 
     print("Create csv from data")
-    intersections_df.to_csv(os.path.join(data_location, 'farm-information/fields_per_disp.csv'))
+    # intersections_df.to_csv(os.path.join(data_location, 'farm-information/fields_per_disp.csv'))
     print(intersections_df.head())
     print(intersections_df.shape)
     print(f"Amount of organization numbers in new dataset{len(set(intersections_df['orgnr'].tolist()))}")

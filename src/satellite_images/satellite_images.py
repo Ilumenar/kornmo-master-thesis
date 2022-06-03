@@ -14,7 +14,7 @@ def read_images(filename, split=-1):
     with h5py.File(os.path.join(img_location, filename), "r") as f:
         images = f['images']
         for i, orgnum in enumerate(tqdm(images.keys(), total=split)):
-            if (split == i):
+            if split == i:
                 break
             img_dicts = {}
             for year in images[orgnum]:

@@ -4,17 +4,19 @@ import sys
 import geopandas as gpd
 import os
 import h5py
+import numpy as np
 from PIL import Image, ImageDraw
 from shapely.geometry import box
 from tqdm import tqdm
 
-from src.mask.geo_point_translator import GeoPointTranslator
+from kornmo.mask.geo_point_translator import GeoPointTranslator
 from kornmo.sentinel.storage import SentinelDataset
 from src.utils import boundingBox, convert_crs
 
+# Python script for creating 16 x 16 images including masks
 
 NEW_IMAGES_PATH = 'E:/MasterThesisData/Satellite_Images/small_images_all.h5'
-# NEW_MASKS_PATH = 'E:/MasterThesisData/Satellite_Images/small_masks_train.h5'
+NEW_MASKS_PATH = 'E:/MasterThesisData/Satellite_Images/small_masks_train.h5'
 SATELLITE_IMAGES_PATH = 'E:/MasterThesisData/Satellite_Images/combined_uncompressed.h5'
 POLYGONS_PATH = '../../../kornmo-data-files/raw-data/crop-classification-data/all_data.gpkg'
 
@@ -77,7 +79,8 @@ def generate_mask(polygon, size=16):
 
     bbox = boundingBox(polygon.centroid.y, polygon.centroid.x, 1)
     bbox_poly = box(bbox[0], bbox[1], bbox[2], bbox[3])
-    point_translator = GeoPointTranslator(bbox_poly, size)
+    # Update srcX and srcY in self.p1 to be 16 instead of 100
+    point_translator = GeoPointTranslator(bbox_poly)
 
     shapes = [polygon.exterior.coords[:]]
     for shape in shapes:
@@ -105,11 +108,11 @@ def crop_images(images, polygons, coords, orgnr, year, size=16):
             cropped_image = crop_img(image, math.floor(point['x']), math.floor(point['y']), size)
             cropped_images_per_polygon.append(cropped_image)
 
-        # mask = generate_mask(polygon)
-        # cropped_mask = crop_img(np.asarray(mask), math.floor(point['x']), math.floor(point['y']), size)
-        # Image.fromarray(np.array(mask)).show()
+        mask = generate_mask(polygon)
+        cropped_mask = crop_img(np.asarray(mask), math.floor(point['x']), math.floor(point['y']), size)
+        Image.fromarray(np.array(mask)).show()
 
-        # insert_data(NEW_MASKS_PATH, f'masks/{orgnr}{i}/{year}', mask)
+        insert_data(NEW_MASKS_PATH, f'masks/{orgnr}{i}/{year}', mask)
         insert_data(NEW_IMAGES_PATH, f'images/{orgnr}{i}/{year}', cropped_images_per_polygon)
 
 
@@ -127,14 +130,13 @@ def create_small_images(satellite_images, centroid_coords, training_polys):
         except IndexError as e:
             print(orgnr)
             sys.exit(0)
-        # insert_images(NEW_IMAGES_PATH, f'{orgnr}/{year}', cropped_images)
 
 
 def main():
     satellite_images, centroid_coords, training_polys = read_data()
 
     create_h5_file(NEW_IMAGES_PATH)
-    # create_h5_file(NEW_MASKS_PATH)
+    create_h5_file(NEW_MASKS_PATH)
 
     create_small_images(satellite_images, centroid_coords, training_polys)
 

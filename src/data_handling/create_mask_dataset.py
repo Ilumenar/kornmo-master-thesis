@@ -9,6 +9,7 @@ from src.mask.geo_point_translator import GeoPointTranslator
 from src.utils import boundingBox, convert_crs
 
 
+
 def create_mask_file(filename):
     if not os.path.exists(filename):
         with h5py.File(filename, "a") as file:

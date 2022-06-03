@@ -5,6 +5,8 @@ from tqdm import tqdm
 import os
 import sys
 
+# Python script for converting our gdb-files to csv files.
+
 print("Reading jordsmonn_norge")
 layers = fiona.listlayers('../kornmo_old-data-files/raw-data/soil-data/jordsmonn.gdb')
 jordsmonn = gpd.GeoDataFrame()
